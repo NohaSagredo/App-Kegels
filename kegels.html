@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kegel Flow | Entrenamiento Pélvico</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface: rgba(30, 41, 59, 0.6);
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --primary: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.5);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --relax: #10b981;
+            --relax-glow: rgba(16, 185, 129, 0.5);
+            --streak: #f97316;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --modal-bg: rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --surface: rgba(255, 255, 255, 0.6);
+            --surface-border: rgba(0, 0, 0, 0.05);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #0284c7;
+            --primary-glow: rgba(2, 132, 199, 0.4);
+            --relax: #059669;
+            --relax-glow: rgba(5, 150, 105, 0.4);
+            --modal-bg: rgba(255,255,255,0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+        @keyframes flowBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #0c4a6e, #020617);
+            background-size: 400% 400%;
+            animation: flowBackground 15s ease infinite;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        [data-theme="light"] body {
+            background: linear-gradient(-45deg, #e0f2fe, #bae6fd, #d1fae5, #f1f5f9);
+            background-size: 400% 400%;
+        }
+        [data-theme="light"] .app-container {
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1);
+        }
+        [data-theme="light"] .timer-container {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05), inset 0 2px 0 rgba(255,255,255,0.8);
+        }
+        [data-theme="light"] .time-text, [data-theme="light"] .stat-value {
+            text-shadow: none;
+        }
+        .app-container {
+            width: 100%; max-width: 400px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            border: 1px solid var(--surface-border); border-radius: 30px;
+            padding: 2rem 1.5rem 150px 1.5rem; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .level-badge { font-weight: 700; color: var(--primary); font-size: 1.15rem; }
+        .streak-badge { color: var(--streak); font-weight: 700; font-size: 1.05rem; }
+        .xp-text { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
+        
+        .sound-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .sound-btn:hover { transform: scale(1.15) rotate(5deg); }
+
+        .progress-bar { width: 100%; background: rgba(0,0,0,0.2); height: 12px; border-radius: 10px; margin-bottom: 1.5rem; margin-top: 0.8rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); border: 1px solid var(--surface-border); overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #818cf8); border-radius: 10px; width: 0%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary-glow); }
+
+        .benefit-container, .tips-container {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid var(--surface-border);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 12px;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .benefit-title { font-weight: 700; color: var(--primary); margin-bottom: 0.4rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Breathe Petals */
+        .breathe-petal {
+            position: absolute; width: 200px; height: 200px; border-radius: 50%;
+            background: var(--primary); mix-blend-mode: screen; opacity: 0;
+            pointer-events: none; transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: blur(12px); z-index: 1; transform-origin: center;
+        }
+        .wrapper-contracting .breathe-petal { opacity: 0.35; background: var(--primary); }
+        .wrapper-relaxing .breathe-petal { opacity: 0.2; background: var(--relax); filter: blur(15px); }
+        
+        /* Apple Breathe petal expansion logic */
+        .wrapper-contracting .petal-1 { transform: scale(1.4) rotate(0deg) translate(25px, 0); }
+        .wrapper-contracting .petal-2 { transform: scale(1.4) rotate(120deg) translate(25px, 0); }
+        .wrapper-contracting .petal-3 { transform: scale(1.4) rotate(240deg) translate(25px, 0); }
+
+        .wrapper-relaxing .petal-1 { transform: scale(1.1) rotate(60deg) translate(10px, 0); }
+        .wrapper-relaxing .petal-2 { transform: scale(1.1) rotate(180deg) translate(10px, 0); }
+        .wrapper-relaxing .petal-3 { transform: scale(1.1) rotate(300deg) translate(10px, 0); }
+        
+        .wrapper-idle .breathe-petal { transform: scale(0.9) translate(0, 0); opacity: 0; }
+
+        /* Timer Circle */
+        .timer-container {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            margin: 0 0 1.5rem 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.1);
+            border: 6px solid var(--surface-border);
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .state-text { font-size: 1.15rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; text-align: center; color: var(--text-muted); transition: color 0.5s;}
+        .time-text { font-size: 4.5rem; font-weight: 300; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
+        .reps-text { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 500;}
+
+        /* Visual States */
+        .idle { border-color: rgba(255,255,255,0.1); }
+        .contracting { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 70px var(--primary-glow), inset 0 0 30px var(--primary-glow);
+            transform: scale(1.08);
+            background: rgba(56, 189, 248, 0.1);
+        }
+        .relaxing { 
+            border-color: var(--relax); 
+            box-shadow: 0 0 70px var(--relax-glow), inset 0 0 30px var(--relax-glow);
+            transform: scale(0.95);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .contracting .state-text { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
+        .relaxing .state-text { color: var(--relax); text-shadow: 0 0 10px var(--relax-glow); }
+
+        .paused-state {
+            opacity: 0.6;
+            animation: pulse-pause 2s infinite;
+        }
+        @keyframes pulse-pause {
+            0% { opacity: 0.6; transform: scale(0.98); }
+            50% { opacity: 0.9; transform: scale(1); }
+            100% { opacity: 0.6; transform: scale(0.98); }
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: #fff;
+            border: none;
+            padding: 1.1rem 1.5rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            margin-bottom: 0.5rem;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.3); filter: brightness(1.1); }
+        .btn:active { transform: scale(0.96); box-shadow: 0 2px 10px var(--primary-glow); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; filter: grayscale(1); transform: none; }
+
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #b91c1c); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+        .btn-warning { background: linear-gradient(135deg, var(--warning), #d97706); color: #fff; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
+
+        /* Heatmap Styles */
+        .heat-box { width: 100%; aspect-ratio: 1; border-radius: 4px; background: rgba(255,255,255,0.05); transition: transform 0.2s; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05); }
+        .heat-box:hover { transform: scale(1.15); z-index: 10; position: relative; }
+        .heat-1 { background: rgba(56, 189, 248, 0.4); }
+        .heat-2 { background: rgba(56, 189, 248, 0.7); }
+        .heat-3 { background: rgba(56, 189, 248, 1); box-shadow: 0 0 8px rgba(56,189,248,0.5); }
+        [data-theme="light"] .heat-box:not(.heat-1):not(.heat-2):not(.heat-3) { background: rgba(0,0,0,0.05); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
+
+        .workout-controls { display: none; width: 100%; gap: 10px; margin-bottom: 0.5rem; }
+        
+        .btn-reset, .btn-custom {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--text-main);
+            border: 1px solid var(--surface-border);
+            padding: 0.8rem 1rem;
+            font-size: 0.95rem;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            font-weight: 500;
+        }
+        .btn-reset:hover { border-color: var(--danger); color: var(--danger); background: rgba(239, 68, 68, 0.1); transform: translateY(-1px); }
+        .btn-reset:active { transform: scale(0.96); }
+        .btn-custom { border-color: var(--surface-border); margin-bottom: 0.5rem; }
+        .btn-custom:hover { background: rgba(255,255,255,0.1); transform: translateY(-1px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn-custom:active, .sound-btn:active { transform: scale(0.92); }
+
+        .tips-container {
+            border-left: none;
+            text-align: center;
+            border-radius: 16px;
+            font-style: italic;
+            min-height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            margin-top: 0.8rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: flex; justify-content: space-between; width: 100%; margin-top: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid var(--surface-border);
+            padding: 1.2rem; border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .stat-item { text-align: center; width: 33%; }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--primary); text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-top: 6px; font-weight: 600; letter-spacing: 0.5px;}
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--modal-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000; padding: 1rem;
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        .modal {
+            background: var(--surface);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--surface-border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            padding: 2.5rem 2rem; border-radius: 24px;
+            width: 100%; max-width: 360px; text-align: center;
+            transform: scale(0.95) translateY(10px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+        }
+        .modal.active { transform: scale(1) translateY(0); opacity: 1; }
+        .modal h2 { color: var(--primary); margin-bottom: 1.5rem; font-size: 1.4rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
+        .input-group { margin-bottom: 1.2rem; text-align: left; }
+        .input-group label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;}
+        .input-group input { 
+            width: 100%; padding: 0.9rem 1rem; border-radius: 12px; border: 1px solid var(--surface-border); 
+            background: rgba(0,0,0,0.2); color: var(--text-main); font-size: 1.05rem; outline: none;
+            transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2), inset 0 2px 4px rgba(0,0,0,0.1); }
+
+        /* Accordion (Academy) */
+        details {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            text-align: left;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        [data-theme="light"] details { background: rgba(0,0,0,0.02); }
+        summary {
+            padding: 1.2rem;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            color: var(--primary);
+            list-style: none; /* Hide default arrow */
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: "▼"; font-size: 0.8rem; color: var(--text-muted); transition: transform 0.3s ease; }
+        details[open] summary::after { transform: rotate(180deg); }
+        .details-content {
+            padding: 0 1.2rem 1.2rem 1.2rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Mini Chart */
+        .mini-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 45px; width: 100%; margin-top: 8px; gap: 4px; }
+        .mini-bar-container { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 1; height: 100%; gap: 6px; }
+        .mini-bar { width: 100%; max-width: 14px; background: rgba(255,255,255,0.08); border-radius: 4px; transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1); min-height: 6px; }
+        .mini-bar.active { background: linear-gradient(0deg, var(--primary), #818cf8); box-shadow: 0 0 8px var(--primary-glow); }
+        .mini-day { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
+
+        /* Roadmap Styles */
+        .roadmap-container { position: relative; padding: 1rem 0; margin-bottom: 0.5rem; text-align: left; }
+        .roadmap-line { position: absolute; left: 23px; top: 0; bottom: 0; width: 2px; background: var(--surface-border); border-radius: 2px; }
+        .roadmap-item { position: relative; display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: flex-start; }
+        .roadmap-item:last-child { margin-bottom: 0; }
+        
+        .roadmap-icon { width: 48px; height: 48px; min-width: 48px; border-radius: 50%; background: var(--surface); border: 2px solid var(--surface-border); display: flex; justify-content: center; align-items: center; font-size: 1.4rem; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.3s ease; }
+        .roadmap-content { background: rgba(255,255,255,0.02); border: 1px solid var(--surface-border); padding: 1rem 1.2rem; border-radius: 16px; flex: 1; opacity: 0.6; transition: all 0.3s ease; }
+        .roadmap-content h3 { font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.4rem; font-weight: 700;}
+        .roadmap-content p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+        .roadmap-item.completed .roadmap-icon { background: rgba(16, 185, 129, 0.1); border-color: var(--relax); color: var(--relax); box-shadow: 0 0 15px var(--relax-glow); }
+        .roadmap-item.completed .roadmap-content { opacity: 1; border-color: rgba(16, 185, 129, 0.3); }
+        .roadmap-item.completed .roadmap-content h3 { color: var(--relax); }
+
+        .roadmap-item.current .roadmap-icon { background: rgba(56, 189, 248, 0.1); border-color: var(--primary); font-size: 1.6rem; box-shadow: 0 0 20px var(--primary-glow); animation: pulse-roadmap 2s infinite; }
+        .roadmap-item.current .roadmap-content { opacity: 1; border-color: var(--primary); background: rgba(56, 189, 248, 0.05); }
+        .roadmap-item.current .roadmap-content h3 { color: var(--primary); }
+
+        @keyframes pulse-roadmap { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
+
+        /* Zen Garden & Shop */
+        .zen-garden { position: relative; width: 100%; height: 140px; display: flex; justify-content: space-evenly; align-items: flex-end; padding-bottom: 10px; margin-top: 1rem; z-index: 10; pointer-events: none; }
+        .garden-slot { width: 70px; height: 120px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
+        .garden-slot:hover { transform: scale(1.05); }
+        .garden-plant { font-size: 3.5rem; line-height: 1; z-index: 2; margin-bottom: -15px; animation: gentle-sway 4s ease-in-out infinite alternate; transform-origin: bottom center; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));}
+        .garden-pot { font-size: 3rem; line-height: 1; z-index: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        .slot-add { font-size: 1.5rem; opacity: 0.3; border: 2px dashed rgba(255,255,255,0.3); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; background: rgba(0,0,0,0.2); }
+        .garden-slot:hover .slot-add { opacity: 0.8; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.8); }
+        @keyframes gentle-sway { 0% { transform: rotate(-4deg); } 100% { transform: rotate(4deg); } }
+
+        .shop-item { background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; text-align: left; }
+        .shop-item-icon { font-size: 2.5rem; width: 60px; text-align: center; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));}
+        .shop-item-info { flex: 1; padding-left: 10px; }
+        .shop-item-title { font-weight: bold; font-size: 1rem; color: var(--text-main); }
+        .shop-item-price { color: var(--warning); font-weight: bold; font-size: 0.9rem; margin-top: 4px;}
+        .shop-btn { background: var(--surface-border); border: none; padding: 8px 15px; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .shop-btn:hover:not(:disabled) { background: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(56, 189, 248, 0.3); }
+        .shop-btn:disabled { opacity: 0.4; background: rgba(255,255,255,0.05); cursor: not-allowed; }
+
+        .inv-item { background: rgba(255,255,255,0.05); border: 2px solid transparent; border-radius: 12px; padding: 10px; text-align: center; min-width: 80px; cursor: pointer; transition: all 0.2s;}
+        .inv-item:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+        .inv-item.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.1); box-shadow: 0 0 15px rgba(56,189,248,0.2); }
+        .inv-item-icon { font-size: 2.2rem; margin-bottom: 5px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));}
+        .inv-item-name { font-size: 0.75rem; color: var(--text-muted); line-height: 1.1; }
+
+        /* Media Queries para Desktop Dashboard */
+        @media (min-width: 800px) {
+            .app-container {
+                max-width: 900px;
+                padding: 3rem 4rem;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas: 
+                    "header header"
+                    "topbar topbar"
+                    "coach coach"
+                    "progress progress"
+                    "timer benefit"
+                    "reps benefit"
+                    "controls actions"
+                    "tips stats"
+                    "reset stats"
+                    "garden garden";
+                gap: 15px 40px;
+                align-items: center;
+            }
+            .app-container > div:first-of-type { grid-area: header; margin-bottom: 0.5rem !important; }
+            .top-bar { grid-area: topbar; }
+            #aiCoachCard { grid-area: coach; margin-top: 0 !important; margin-bottom: 0 !important; }
+            .progress-bar { grid-area: progress; margin-bottom: 2rem !important; }
+            
+            #timerWrapper { grid-area: timer; margin: 0 !important; }
+            .reps-text { grid-area: reps; margin: 0 !important; }
+            #startBtn { grid-area: controls; align-self: start; }
+            #workoutControls { grid-area: controls; align-self: start; }
+            .tips-container { grid-area: tips; align-self: start; margin-top: 1.5rem !important; }
+            .app-container > .btn-reset { grid-area: reset; align-self: start; margin-top: 0 !important; }
+            #zenGarden { grid-area: garden; margin-top: 2rem !important; }
+            
+            .benefit-container { grid-area: benefit; height: 100%; margin: 0 !important; display: flex; flex-direction: column; justify-content: center; }
+            #actionButtonsWrapper { grid-area: actions; margin: 0 !important; align-self: start; align-content: start; }
+            .stats-grid { grid-area: stats; height: 100%; margin: 0 !important; }
+
+            /* Agrandar timer en desktop */
+            .timer-container { width: 260px; height: 260px; }
+            .breathe-petal { width: 260px; height: 260px; }
+            .wrapper-contracting .petal-1 { transform: scale(1.5) rotate(0deg) translate(30px, 0); }
+            .wrapper-contracting .petal-2 { transform: scale(1.5) rotate(120deg) translate(30px, 0); }
+            .wrapper-contracting .petal-3 { transform: scale(1.5) rotate(240deg) translate(30px, 0); }
+        }
+
+    </style>
+</head>
+<body>
+<div class="background-animation"></div>
+<canvas id="particlesCanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
+
+<div class="app-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; position: relative; z-index: 10;">
+        <span class="streak-badge" id="streakBadge">🔥 0</span>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div id="coinBadge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--warning); padding: 5px 12px; border-radius: 50px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 10px rgba(245, 158, 11, 0.1);" onclick="openShopModal()" title="Tienda Zen">🪙 <span id="topCoinsDisplay">0</span></div>
+            <button class="sound-btn" id="soundToggle" onclick="toggleSound()">🔊</button>
+        </div>
+    </div>
+    
+    <div class="top-bar">
+        <div class="level-badge" id="levelDisplay" style="display: flex; gap: 8px; align-items: center;">
+            <button class="sound-btn" onclick="toggleTheme()" id="themeBtn" title="Cambiar Tema">🌙</button>
+            <span id="levelText" style="font-weight: bold; margin-right: 5px;">Nivel 1: Despertar</span>
+            <span style="opacity: 0.8; font-size: 0.9rem;"><span id="xpTextNum">0</span> <span id="xpTextMax">/ 0 XP</span></span>
+            <button class="sound-btn" id="reminderToggle" onclick="openReminderModal()" title="Recordatorio Diario" style="margin-left: 5px;">🔔</button>
+        </div>
+    </div>
+    
+    <div id="aiCoachCard" style="background: rgba(255,255,255,0.03); border: 1px solid var(--primary); border-left: 4px solid var(--primary); border-radius: 12px; padding: 12px 15px; margin-bottom: 1rem; display: flex; gap: 12px; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div style="font-size: 1.8rem; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">🤖</div>
+        <div style="flex: 1; font-size: 0.85rem; color: var(--text-main); line-height: 1.4;" id="aiCoachText">
+            Analizando tus datos tácticos...
+        </div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="xpProgress"></div>
+    </div>
+
+    <div class="benefit-container" id="benefitContainer" title="Haz clic para abrir el Mapa y leer en profundidad" style="cursor: pointer; position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease;" onclick="openRoadmapModal()" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)';">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="flex: 1;">
+                <div class="benefit-title">Tu cuerpo en este nivel <span style="font-size: 0.7rem; opacity: 0.6; font-weight: normal;">(Clic para leer detalles)</span>:</div>
+                <div id="benefitText" style="padding-right: 5px; line-height: 1.4; opacity: 0.9;">Cargando beneficios detallados...</div>
+            </div>
+            <div style="font-size: 1.5rem; opacity: 0.8; margin-left: 10px; color: var(--primary); background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50%;">🗺️</div>
+        </div>
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--primary), transparent); opacity: 0.4;"></div>
+    </div>
+
+    <div id="timerWrapper" class="wrapper-idle" style="position: relative; display: flex; justify-content: center; align-items: center; width: 100%; margin: 1rem 0;">
+        <div class="breathe-petal petal-1"></div>
+        <div class="breathe-petal petal-2"></div>
+        <div class="breathe-petal petal-3"></div>
+        <div class="timer-container idle" id="timerCircle" style="margin: 0;">
+            <div class="state-text" id="stateText">LISTO</div>
+            <div class="time-text" id="timeText">0:00</div>
+        </div>
+    </div>
+    <div class="reps-text" id="repsText">0 / 5 Repeticiones</div>
+
+    <div id="startBtn" style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 0.5rem;">
+        <button class="btn" id="btnChallenge" style="width: 100%; margin: 0; background: linear-gradient(135deg, #f59e0b, #d97706); color: white;" onclick="startDailyChallenge()">👑 Reto Diario Supremo</button>
+        <div style="display: flex; gap: 10px; width: 100%;">
+            <button class="btn" id="btnModoLibre" style="flex: 2; margin: 0;" onclick="openTrainingMenu()">🏋️ Entrenar</button>
+            <button class="btn" id="btnFlicks" style="flex: 1; margin: 0; background: linear-gradient(135deg, #6366f1, #4338ca); color: white;" onclick="startFlicks()">⚡ Flicks</button>
+        </div>
+    </div>
+    
+    <div class="workout-controls" id="workoutControls">
+        <button class="btn btn-danger" onclick="cancelWorkout()">⏹ Detener</button>
+        <button class="btn btn-warning" id="pauseBtn" onclick="togglePause()">⏸ Pausar</button>
+    </div>
+
+    <div id="actionButtonsWrapper" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-top: 0.5rem; margin-bottom: 0.5rem;">
+        <button class="btn-custom" onclick="openAcademyModal()" style="border-color: #a855f7; color: #a855f7; margin: 0; flex: 1; min-width: 100%; background: rgba(168, 85, 247, 0.1);">📚 La Academia (Aprender)</button>
+        <button class="btn-custom" onclick="openAchievementsModal()" style="border-color: #f59e0b; color: #f59e0b; margin: 0; flex: 1; min-width: 45%;">🏆 Logros</button>
+        <button class="btn-custom" onclick="openRemindersModal()" style="border-color: #10b981; color: #10b981; margin: 0; flex: 1; min-width: 45%;">🔔 Aviso</button>
+        <button class="btn-custom" onclick="openSettingsModal()" style="margin: 0; flex: 1; min-width: 45%;">⚙️ Ajustes</button>
+    </div>
+
+    <div class="tips-container">
+        <i id="tipText">💡 Tip: Vacía tu vejiga antes de empezar.</i>
+    </div>
+
+    <div class="stats-grid" style="flex-direction: column; gap: 15px;">
+        <div style="display: flex; justify-content: space-between; width: 100%;">
+            <div class="stat-item">
+                <div class="stat-value" id="statTotalWorkouts">0</div>
+                <div class="stat-label">Sesiones</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statAvgHold" style="color: var(--relax)">0s</div>
+                <div class="stat-label">Rto. Máx</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="statTotalXP" style="color: var(--streak)">0</div>
+                <div class="stat-label">XP Total</div>
+            </div>
+        </div>
+        <div style="width: 100%; border-top: 1px solid var(--surface-border); padding-top: 12px; margin-top: auto;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; font-weight: 700; text-align: center; letter-spacing: 0.5px;">Panel de Constancia (35 Días)</div>
+            <div id="heatmapContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 250px; margin: 0 auto; padding-bottom: 5px;">
+                <!-- Generado por JS -->
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-reset" onclick="resetProgress()">Reiniciar Progreso</button>
+    
+    <!-- Zen Garden -->
+    <div id="zenGarden" class="zen-garden"></div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal" id="settingsModalContent">
+        <h2>Ajustes y Respaldo</h2>
+        <button class="btn-custom" style="margin-bottom: 1.5rem;" onclick="openCustomModal()">🛠️ Editar Modo Libre</button>
+        
+        <div style="text-align: left; margin-bottom: 1.5rem;">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Respalda tus avances localmente.</p>
+            <button class="btn" style="background:var(--primary); color:#000;" onclick="downloadBackup()">💾 Exportar Datos</button>
+            <label class="btn-custom" style="display:block; text-align:center; padding: 0.8rem; margin-top: 0.5rem;">
+                📂 Importar Datos
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importBackup(event)">
+            </label>
+        </div>
+
+        <button class="btn-danger" style="margin-bottom: 0.5rem;" onclick="resetProgress()">Borrar Progreso</button>
+        <button class="btn-reset" onclick="closeSettingsModal()">Volver</button>
+    </div>
+</div>
+
+
+
+<!-- Onboarding Modal -->
+<div class="modal-overlay" id="onboardingModal" style="background: var(--bg-color); z-index: 3000;">
+    <div class="modal" id="onboardingModalContent" style="transform: translateY(0); max-width: 400px; opacity: 1;">
+        <h2>¡Bienvenido a Kegel Flow!</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Para personalizar tu experiencia y tus tips diarios, dinos cuál es tu objetivo principal.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 0.5rem;">
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #38bdf8, #0284c7); color:#fff;" onclick="selectGoal('clinico', 'Control de Vejiga / Fugas')">💧 Control de Vejiga / Fugas</button>
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #ec4899, #be185d); color:#fff;" onclick="selectGoal('postparto', 'Recuperación Post-parto')">👶 Recuperación Post-parto</button>
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color:#fff;" onclick="selectGoal('sexual', 'Plenitud Sexual')">🔥 Plenitud Sexual</button>
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #10b981, #059669); color:#fff;" onclick="selectGoal('fitness', 'Fitness Core / Prevención')">🛡️ Fitness Core / Prevención</button>
+        </div>
+    </div>
+
+
+
+</div>
+
+<!-- Shop Modal -->
+<div class="modal-overlay" id="shopModal" style="z-index: 4000;">
+    <div class="modal" id="shopModalContent" style="max-height: 85vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2>Tienda Zen</h2>
+            <div style="font-size: 1.2rem; font-weight: bold; color: var(--warning);">🪙 <span id="shopCoinsDisplay">0</span></div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; text-align: left;">Adquiere semillas y macetas para darle vida a tu jardín personal.</p>
+        
+        <h3 style="text-align: left; margin-bottom: 10px; font-size: 1.1rem;">Maceteros</h3>
+        <div id="shopListPots"></div>
+        
+        <h3 style="text-align: left; margin-top: 1.5rem; margin-bottom: 10px; font-size: 1.1rem;">Plantas</h3>
+        <div id="shopListPlants"></div>
+
+        <button class="btn-reset" style="margin-top: 1rem;" onclick="closeShopModal()">Cerrar Tienda</button>
+    </div>
+</div>
+
+<!-- Decorate Modal -->
+<div class="modal-overlay" id="decorateModal" style="z-index: 4500;">
+    <div class="modal" id="decorateModalContent" style="max-height: 85vh; overflow-y: auto;">
+        <h2 style="margin-bottom: 0.5rem;">Decorar Parcela</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Haz clic en tu inventario para colocar los elementos.</p>
+        
+        <h3 style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1rem;">Tus Macetas</h3>
+        <div id="decoratePotsList" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; min-height: 100px;"></div>
+        
+        <h3 style="text-align: left; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1rem;">Tus Plantas</h3>
+        <div id="decoratePlantsList" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; min-height: 100px;"></div>
+
+        <button class="btn" style="background: rgba(220, 38, 38, 0.4); margin-top: 1.5rem; width: 100%; border: 1px solid rgba(220,38,38,0.8);" onclick="removeDecoration()">Vaciar Parcela</button>
+        <button class="btn-reset" onclick="closeDecorateModal()">Cerrar Decorador</button>
+    </div>
+</div>
+
+<!-- Academy Modal -->
+<div class="modal-overlay" id="academyModal">
+    <div class="modal" id="academyModalContent" style="max-height: 85vh; overflow-y: auto;">
+        <h2 style="color: #a855f7;">📚 La Academia</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">La teoría detrás de tu práctica.</p>
+        
+        <details>
+            <summary>¿Cómo ubico el músculo correcto?</summary>
+            <div class="details-content">
+                <strong>El truco de la orina:</strong> Imagina que estás orinando y necesitas detener el flujo de golpe. El músculo que aprietas es exactamente el suelo pélvico (Pubococcígeo).<br><br>
+                <em>Ojo:</em> No uses este truco en el baño real frecuentemente, ya que puede causar infecciones y desaprender el ciclo natural. Úsalo solo 1 o 2 veces para identificarlo. ¡Durante tus ejercicios en Kegel Flow, tu vejiga debe estar vacía!
+            </div>
+        </details>
+        
+        <details>
+            <summary>Respiración Diafragmática</summary>
+            <div class="details-content">
+                No aguantes la respiración. Cuando Kegel Flow diga <strong>CONTRAE</strong>, debes exhalar el aire (botar). Cuando diga <strong>RELAJA</strong>, inhala profundo llenando tu vientre de aire.<br><br>
+                Esto previene presiones peligrosas hacia abajo en tu cavidad abdominal.
+            </div>
+        </details>
+        
+        <details>
+            <summary>Los peligros de la Hipertonía</summary>
+            <div class="details-content">
+                Apretar demasiado tiempo sin relajar puede causar <strong>Hipertonía Pélvica</strong> (un músculo tenso y acortado que causa dolor y disfunción).<br><br>
+                Es por esto que nuestros niveles exigen tiempos de relajación vitales. Cuando veas la frase "RELAJA", visualiza tus músculos soltándose por completo como una banda elástica suelta.
+            </div>
+        </details>
+
+        <details>
+            <summary>Mitos: Abdomen y Glúteos</summary>
+            <div class="details-content">
+                Si al contraer sientes que tus nalgas se levantan de la silla, o tu estómago se endurece mucho, <strong>lo estás haciendo mal</strong>.<br><br>
+                El aislamiento es clave. Nadie a tu alrededor debería notar que estás haciendo tus ejercicios Kegel.
+            </div>
+        </details>
+
+        <button class="btn-reset" style="margin-top: 1.5rem;" onclick="closeAcademyModal()">Cerrar Academia</button>
+    </div>
+</div>
+
+<!-- Roadmap Modal -->
+<div class="modal-overlay" id="roadmapModal">
+    <div class="modal" id="roadmapModalContent" style="max-height: 85vh; overflow-y: auto; padding-left: 1.5rem; padding-right: 1.5rem;">
+        <h2 style="margin-bottom: 0.5rem; font-size: 1.6rem;">🗺️ Tu Roadmap</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">El camino desde el despertar hasta la maestría pélvica.</p>
+        
+        <div class="roadmap-container" id="roadmapList">
+            <div class="roadmap-line"></div>
+            <!-- Generado por JS -->
+        </div>
+
+        <button class="btn-reset" onclick="closeRoadmapModal()">Volver</button>
+    </div>
+</div>
+
+<!-- Training Menu Modal -->
+<div class="modal-overlay" id="trainingModal" style="z-index: 3500;">
+    <div class="modal" id="trainingModalContent">
+        <h2 style="margin-bottom: 1rem;">Elige tu Rutina</h2>
+        
+        <button class="btn" id="btnRoutineLevel" style="width: 100%; margin-bottom: 10px; background: var(--primary); color: white;" onclick="startLevelWorkout()">
+            🛡️ Rutina de Nivel <br><span style="font-size:0.8rem; font-weight:normal;">Siguiente paso del programa</span>
+        </button>
+        
+        <button class="btn" style="width: 100%; margin-bottom: 15px; background: rgba(255,255,255,0.1); border: 1px solid var(--surface-border); color: white;" onclick="openCustomModalFromMenu()">
+            ⚙️ Modo Libre <br><span style="font-size:0.8rem; font-weight:normal; color: var(--text-muted);">Ajusta tus propios tiempos</span>
+        </button>
+        
+        <button class="btn-reset" onclick="closeTrainingModal()">Cancelar</button>
+    </div>
+</div>
+
+<!-- Custom Workout Modal -->
+<div class="modal-overlay" id="customModal">
+    <div class="modal" id="customModalContent">
+        <h2>Rutina Personalizada</h2>
+        <div class="input-group">
+            <label>Repeticiones</label>
+            <input type="number" id="inpReps" value="10" min="1" max="50">
+        </div>
+        <div class="input-group">
+            <label>Contraer (Segundos)</label>
+            <input type="number" id="inpContract" value="5" min="1" max="60">
+        </div>
+        <div class="input-group">
+            <label>Relajar (Segundos)</label>
+            <input type="number" id="inpRelax" value="5" min="1" max="60">
+        </div>
+        <button class="btn" style="margin-top: 1rem;" onclick="startCustomWorkout()">▶ Iniciar Ahora</button>
+        <button class="btn-reset" onclick="closeCustomModal()">Cancelar</button>
+    </div>
+</div>
+
+<!-- Stats Modal -->
+<div class="modal-overlay" id="statsModal">
+    <div class="modal" id="statsModalContent">
+        <h2>Mapa de Calor</h2>
+        <div id="heatmapContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 1rem; padding: 10px; background: #0f172a; border-radius: 12px; border: 1px solid #334155;">
+            <!-- Generated via JS -->
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Historial de 28 días</p>
+        <button class="btn-reset" onclick="closeStatsModal()">Cerrar</button>
+    </div>
+</div>
+
+<!-- Reminders Modal -->
+<div class="modal-overlay" id="remindersModal">
+    <div class="modal" id="remindersModalContent">
+        <h2>Recordatorio Diario</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Te recordaremos entrenar cada día a la hora indicada (Activa las notificaciones del navegador).</p>
+        <div class="input-group">
+            <label>Hora preferida (24h)</label>
+            <input type="time" id="reminderTimeInput" value="09:00">
+        </div>
+        <p id="reminderStatus" style="font-size: 0.8rem; color: var(--relax); margin-top: 10px;"></p>
+        <button class="btn" style="background:var(--relax); color:white; margin-top: 1rem;" onclick="saveReminder()">Guardar Alerta</button>
+        <button class="btn-danger" style="margin-bottom: 0.5rem;" onclick="clearReminder()">Desactivar</button>
+        <button class="btn-reset" onclick="closeRemindersModal()">Cancelar</button>
+    </div>
+</div>
+
+<!-- Achievements Modal -->
+<div class="modal-overlay" id="achievementsModal">
+    <div class="modal" id="achievementsModalContent" style="max-height: 80vh; overflow-y: auto;">
+        <h2>Mis Logros</h2>
+        <div id="achievementsList" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem;">
+            <!-- Rendered via JS -->
+        </div>
+        <button class="btn-reset" onclick="closeAchievementsModal()">Cerrar</button>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toastNotification" style="position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 1rem 1.5rem; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--primary); display: flex; align-items: center; gap: 15px; transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000;">
+    <span id="toastIcon" style="font-size: 1.8rem;">🏆</span>
+    <div>
+        <div id="toastTitle" style="font-size: 0.75rem; color: var(--primary); font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Logro Desbloqueado</div>
+        <div id="toastDesc" style="font-size: 1rem; font-weight: 500;">Nombre del Logro</div>
+    </div>
+</div>
+
+<script>
+    // PWA Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .catch(err => console.log('SW registration failed', err));
+      });
+    }
+
+    // Configuración Base
+    const levels = [
+        { id: 1, name: "Despertar", reps: 5, contractTime: 3, relaxTime: 4, xpRequired: 0, xpReward: 10,
+          benefit: "En esta fase inicial, estás despertando la conexión neuronal entre tu cerebro y el músculo pubococcígeo (PC). Es normal sentir temblores o reclutar músculos equivocados (glúteos o abdomen). Al aislar el músculo, inicias un aumento crucial del flujo sanguíneo hacia la región pélvica, vital para tu salud íntima." },
+        { id: 2, name: "Iniciación", reps: 8, contractTime: 4, relaxTime: 5, xpRequired: 150, xpReward: 15,
+          benefit: "Tu control voluntario mejora y el músculo PC comienza a hipertrofiarse. Ahora puedes contraerlo sin tensar el resto del cuerpo. Empezarás a notar erecciones ligeramente más firmes debido a la mejora en la retención de sangre en los cuerpos cavernosos, además de una eyaculación con más potencia." },
+        { id: 3, name: "Control", reps: 10, contractTime: 5, relaxTime: 5, xpRequired: 800, xpReward: 20,
+          benefit: "Tu suelo pélvico ya no es pasivo; adquieres la capacidad de intervenir conscientemente. Al realizar una contracción fuerte (Flick) justo antes del 'punto de no retorno', puedes comenzar a suprimir o retrasar el reflejo eyaculatorio prolongando el acto sexual. Además, masajeas internamente la próstata al contraer." },
+        { id: 4, name: "Resistencia", reps: 10, contractTime: 7, relaxTime: 8, xpRequired: 2000, xpReward: 25,
+          benefit: "Tus fibras musculares actúan ahora con resistencia de maratón. Logras sostener contracciones que funcionan como un torniquete natural, atrapando la sangre para erecciones de máxima dureza y duración. Tu dominio sobre la eyaculación precoz es enorme, permitiéndote decidir cuándo terminar de forma controlada." },
+        { id: 5, name: "Maestría Pélvica", reps: 15, contractTime: 10, relaxTime: 10, xpRequired: 4500, xpReward: 30,
+          benefit: "El pináculo anatómico. Tienes dominio absoluto sobre tu respuesta orgásmica: con la técnica adecuada, puedes separar el orgasmo de la eyaculación (logrando multiplicar el placer) controlando el PC a voluntad. Tu suelo pélvico es un músculo de acero, asegurando tu longevidad y potencia sexual intacta de por vida." }
+    ];
+
+    const baseTips = [
+        "Respira fluidamente. Aguantar la respiración anula el efecto.",
+        "Asegúrate de no contraer glúteos ni abdomen. Únicamente tu suelo pélvico.",
+        "La consistencia es clave. 3 veces por día da resultados visibles en 4 semanas.",
+        "El tiempo de relajación es tan importante como la contracción para evitar hipertonía.",
+        "Vacía tu vejiga siempre antes de comenzar."
+    ];
+    
+    function getTipsByGoal() {
+        if (!user.goal) return baseTips;
+        if (user.goal === 'clinico') return [...baseTips, "Objetivo: Paciencia. El control de vejiga mejora drásticamente tras 6 semanas de constancia.", "Notarás las reducciones de fugas al toser o reír muy pronto."];
+        if (user.goal === 'postparto') return [...baseTips, "Objetivo: Recuperación. Empieza suave, tu cuerpo ha pasado por mucho.", "No te excedas. La zona perineal necesita sanar mientras se tonifica."];
+        if (user.goal === 'sexual') return [...baseTips, "Objetivo: Plenitud. Mayor flujo sanguíneo significa mayor sensibilidad física.", "Un músculo PC fuerte mejora el control, la lubricación y la intensidad orgásmica."];
+        if (user.goal === 'fitness') return [...baseTips, "Objetivo: Core Fuerte. El suelo pélvico es la base oculta de tu core.", "Fortalecer tu suelo pélvico protegerá tu zona lumbar durante levantamientos pesados."];
+        return baseTips;
+    }
+
+    // Estado del Usuario
+    let user = { 
+        xp: 0, currentLevelIndex: 0, streak: 0, lastWorkoutDate: null, 
+        totalWorkouts: 0, maxHoldTime: 0, achievements: [],
+        workoutDates: {}, reminderTime: null, reminderSentToday: null, lastDailyDate: null,
+        goal: null, coins: 0, inventory: [], garden: [null, null, null, null]
+    };
+    
+    // Estado de la App
+    let isWorkingOut = false;
+    let isPaused = false;
+    let isCancelled = false;
+    let soundMode = localStorage.getItem('kegelSoundMode') || 'voice'; // 'voice', 'beep', 'mute'
+    
+    // Elementos DOM
+    const elLevel = document.getElementById('levelDisplay');
+    const elStreak = document.getElementById('streakBadge');
+    const elXpProgress = document.getElementById('xpProgress');
+    const elBenefitText = document.getElementById('benefitText');
+    const elTimerCircle = document.getElementById('timerCircle');
+    const elStateText = document.getElementById('stateText');
+    const elTimeText = document.getElementById('timeText');
+    const elRepsText = document.getElementById('repsText');
+    const elStartBtn = document.getElementById('startBtn');
+    const elWorkoutControls = document.getElementById('workoutControls');
+    const elPauseBtn = document.getElementById('pauseBtn');
+    const elCustomBtn = document.getElementById('customBtn');
+    const elTipText = document.getElementById('tipText');
+    const elSoundBtn = document.getElementById('soundToggle');
+
+    // --- Audio y Haptic ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+    let noiseNode, noiseGain;
+
+    let ambientOscillators = [];
+    let ambientGain;
+    function initMusic() {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (ambientGain) return; 
+        ambientGain = audioCtx.createGain();
+        ambientGain.gain.value = 0;
+        ambientGain.connect(audioCtx.destination);
+        
+        let baseFrequencies = [261.63, 329.63, 392.00, 523.25, 659.25]; // C E G C E
+        
+        baseFrequencies.forEach(freq => {
+            let osc = audioCtx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            
+            let lfo = audioCtx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.value = Math.random() * 0.05 + 0.02; 
+            
+            let lfoGain = audioCtx.createGain();
+            lfoGain.gain.value = 0.15;
+            
+            lfo.connect(lfoGain.gain);
+            osc.connect(lfoGain);
+            lfoGain.connect(ambientGain);
+            
+            osc.start();
+            lfo.start();
+            ambientOscillators.push(osc);
+        });
+    }
+
+    function setMusicVolume(vol, duration=2) {
+        if (!ambientGain) return;
+        try {
+            ambientGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    function initNoise() {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (noiseNode) return;
+        let bufferSize = 2 * audioCtx.sampleRate;
+        let noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        let output = noiseBuffer.getChannelData(0);
+        let lastOut = 0;
+        for (let i = 0; i < bufferSize; i++) {
+            let white = Math.random() * 2 - 1;
+            output[i] = (lastOut + (0.02 * white)) / 1.02; // brown noise approx
+            lastOut = output[i];
+            output[i] *= 3.5; // gain compensation
+        }
+        noiseNode = audioCtx.createBufferSource();
+        noiseNode.buffer = noiseBuffer;
+        noiseNode.loop = true;
+        
+        let filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 400; // ocean rumble
+        
+        noiseGain = audioCtx.createGain();
+        noiseGain.gain.value = 0;
+        
+        noiseNode.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        noiseNode.start(0);
+    }
+    
+    function setOceanVolume(targetVolume, duration = 1.0) {
+        if (soundMode !== 'ocean' || !noiseGain) return;
+        try {
+            noiseGain.gain.linearRampToValueAtTime(targetVolume, audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    function emitVibration(type) {
+        if (!navigator.vibrate) return;
+        try {
+            if (type === 'contract') navigator.vibrate(150);
+            if (type === 'relax') navigator.vibrate([100, 50, 100]);
+            if (type === 'success') navigator.vibrate([100, 50, 100, 50, 300]);
+            if (type === 'error') navigator.vibrate([50, 50, 50]);
+        } catch(e) {}
+    }
+
+    function playTone(frequency, type = 'sine', duration = 1.0) {
+        if (soundMode !== 'beep' && soundMode !== 'voice') return;
+        // Si está en modo voz, reproducimos un pequeño beep muy suave de fondo (opcional) o directamente no
+        if (soundMode === 'voice') return; 
+
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + duration);
+    }
+
+    function playVoice(text) {
+        if (soundMode === 'music') {
+            if (text === 'Contrae' || text.includes('Sube') || text.includes('Mantén') || text.includes('Pulso')) setMusicVolume(0.8, 1.5);
+            if (text.includes('Relaja')) setMusicVolume(0.2, 2);
+            if (text.includes('Épica') || text.includes('Cancelado') || text === 'Prepárate') setMusicVolume(0, 1);
+            return;
+        }
+        if (soundMode === 'ocean') {
+            if (text === 'Contrae' || text.includes('Sube') || text.includes('Mantén') || text.includes('Pulso')) setOceanVolume(0.5, 1.5);
+            if (text.includes('Relaja')) setOceanVolume(0.1, 2);
+            if (text.includes('Épica') || text.includes('Cancelado') || text === 'Prepárate') setOceanVolume(0, 1);
+            return;
+        }
+        if (soundMode !== 'voice') {
+            if (soundMode === 'beep') {
+                if (text === 'Contrae' || text === 'Mantén firme') playTone(440, 'sine', 1.5);
+                if (text.includes('Relaja')) playTone(220, 'sine', 1.5);
+                if (text === 'Sube 1') playTone(330, 'sine', 1); // E4
+                if (text === 'Sube 2') playTone(440, 'sine', 1); // A4
+                if (text === 'Máximo') playTone(554.37, 'sine', 1.5); // C#5
+                if (text === '¡Pulso!') playTone(659.25, 'triangle', 0.2); // E5 short blip
+                if (text.includes('Épica')) { playTone(330, 'sine', 0.5); setTimeout(()=>playTone(440, 'sine', 1), 300); }
+            }
+            return;
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            let msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'es-ES';
+            msg.rate = 1.1; // Un poco más rápido para no desfasar
+            window.speechSynthesis.speak(msg);
+        }
+    }
+
+    function updateSoundIcon() {
+        if (soundMode === 'voice') elSoundBtn.innerText = '🗣️';
+        else if (soundMode === 'ocean') elSoundBtn.innerText = '🌊';
+        else if (soundMode === 'music') elSoundBtn.innerText = '🎵';
+        else if (soundMode === 'beep') elSoundBtn.innerText = '🔔';
+        else elSoundBtn.innerText = '🔇';
+    }
+
+    function toggleSound() {
+        if (soundMode === 'voice') soundMode = 'ocean';
+        else if (soundMode === 'ocean') { soundMode = 'music'; if(noiseGain) noiseGain.gain.value = 0; }
+        else if (soundMode === 'music') { soundMode = 'beep'; setMusicVolume(0, 1); }
+        else if (soundMode === 'beep') soundMode = 'mute';
+        else soundMode = 'voice';
+        localStorage.setItem('kegelSoundMode', soundMode);
+        updateSoundIcon();
+        if (soundMode === 'ocean') initNoise();
+        if (soundMode === 'music') initMusic();
+        emitVibration('contract');
+    }
+
+    // --- Fechas y Guardado ---
+    function getLocalDateString() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function getYesterdayDateString() {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function saveProgress() {
+        localStorage.setItem('kegelAppData', JSON.stringify(user));
+        updateUI();
+    }
+
+    function loadProgress() {
+        const savedData = localStorage.getItem('kegelAppData');
+        if (savedData) {
+            let parsed = JSON.parse(savedData);
+            user = { ...user, ...parsed }; // Merge con defaults
+        }
+        
+        // Re-evaluar nivel actual en base al XP en caso de rebalanceo
+        user.currentLevelIndex = 0;
+        for (let i = 1; i < levels.length; i++) {
+            if (user.xp >= levels[i].xpRequired) {
+                user.currentLevelIndex = i;
+            }
+        }
+        
+        updateSoundIcon();
+    }
+
+    function resetProgress() {
+        if(confirm("¿Estás seguro de que quieres borrar todo tu progreso?")) {
+            user = { xp: 0, currentLevelIndex: 0, streak: 0, lastWorkoutDate: null, totalWorkouts: 0, maxHoldTime: 0, achievements: [], workoutDates: {}, reminderTime: null, reminderSentToday: null, lastDailyDate: null, coins: 0, inventory: [], garden: [null, null, null, null] };
+            saveProgress();
+            updateUI();
+            alert("Progreso reiniciado.");
+            closeSettingsModal();
+        }
+    }
+
+    // --- Interfaz ---
+    function updateUI() {
+        let lvl = levels[user.currentLevelIndex];
+        let nextLvl = levels[user.currentLevelIndex + 1];
+        
+        document.getElementById('levelText').innerText = `Nivel ${lvl.id}: ${lvl.name}`;
+        elBenefitText.innerText = lvl.benefit;
+        elStreak.innerText = `🔥 ${user.streak}`;
+        
+        if (typeof displayedXp === 'undefined') window.displayedXp = -1;
+        if (typeof displayedCoins === 'undefined') window.displayedCoins = -1;
+        
+        if (nextLvl) {
+            let xpIntoLevel = user.xp - lvl.xpRequired;
+            let xpNeededForNext = nextLvl.xpRequired - lvl.xpRequired;
+            document.getElementById('xpTextMax').innerText = `/ ${nextLvl.xpRequired} XP`;
+            elXpProgress.style.width = `${Math.min((xpIntoLevel / xpNeededForNext) * 100, 100)}%`;
+        } else {
+            document.getElementById('xpTextMax').innerText = `XP (Máx)`;
+            elXpProgress.style.width = `100%`;
+        }
+        
+        if (displayedXp === -1) {
+            document.getElementById('xpTextNum').innerText = user.xp;
+            displayedXp = user.xp;
+        } else if (displayedXp !== user.xp) {
+            animateValue('xpTextNum', displayedXp, user.xp, 1500);
+            displayedXp = user.xp;
+        }
+        
+        if(!isWorkingOut) elRepsText.innerText = `0 / ${lvl.reps} Repeticiones`;
+        
+        // Actualizar Stats
+        document.getElementById('statTotalWorkouts').innerText = user.totalWorkouts || 0;
+        document.getElementById('statAvgHold').innerText = `${user.maxHoldTime || 0}s`;
+        document.getElementById('statTotalXP').innerText = user.xp || 0;
+
+        rotateTip();
+        updateAICoach();
+        renderHeatmap();
+        renderGarden();
+
+        // Actualizar botones con recompensas potenciales
+        let today = getLocalDateString();
+        let dailyXP = lvl.xpReward * 3;
+        let isDailyDone = user.lastDailyDate === today;
+        
+        if(document.getElementById('btnChallenge')) {
+            let btnChal = document.getElementById('btnChallenge');
+            if(isDailyDone) {
+                btnChal.innerHTML = `👑 Reto Completado Hoy <span style="font-size: 0.75rem; opacity: 0.8; font-weight: normal; margin-left: 5px;">✓</span>`;
+                btnChal.style.background = 'rgba(255,255,255,0.1)';
+                btnChal.style.color = 'var(--text-muted)';
+                btnChal.style.boxShadow = 'none';
+            } else {
+                btnChal.innerHTML = `👑 Reto Diario Supremo <span style="font-size: 0.75rem; opacity: 0.8; font-weight: normal; margin-left: 5px;">(+${dailyXP} XP)</span>`;
+                btnChal.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                btnChal.style.color = 'white';
+                btnChal.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.4)';
+            }
+        }
+        if(document.getElementById('btnModoLibre')) document.getElementById('btnModoLibre').innerHTML = `🏋️ Entrenar <span style="font-size: 0.7rem; opacity: 0.8; font-weight: normal; margin-left: 5px;">(+${lvl.xpReward} XP)</span>`;
+        if(document.getElementById('btnFlicks')) document.getElementById('btnFlicks').innerHTML = `⚡ Flicks <span style="font-size: 0.7rem; opacity: 0.8; font-weight: normal; margin-left: 5px;">(+${Math.floor(lvl.xpReward * 0.8)} XP)</span>`;
+    }
+
+    function rotateTip() {
+        const pool = getTipsByGoal();
+        const randomTip = pool[Math.floor(Math.random() * pool.length)];
+        elTipText.innerText = `💡 ${randomTip}`;
+    }
+
+    function updateAICoach() {
+        let el = document.getElementById('aiCoachText');
+        if (!el) return;
+        let today = getLocalDateString();
+        
+        if (user.totalWorkouts === 0 || !user.lastWorkoutDate) {
+            el.innerHTML = "<strong>Bienvenido.</strong> Todo gran viaje comienza con un sencillo paso. Presiona Entrenar.";
+        } else if (user.streak >= 3 && user.lastWorkoutDate === today) {
+            el.innerHTML = `<strong>¡Racha de ${user.streak} días!</strong> Estás desarrollando una memoria muscular increíble. Céntrate en la relajación total.`;
+        } else if (user.streak >= 3 && user.lastWorkoutDate !== today) {
+            el.innerHTML = `<strong>Protege tu racha de ${user.streak}.</strong> Solo toma 3 minutos mantener tu progreso de élite intacto.`;
+        } else if (user.lastDailyDate === today) {
+            el.innerHTML = `<strong>Reto Supremo completado.</strong> Tus fibras de contracción rápida están fatigadas (es positivo). Descansa y recupera.`;
+        } else {
+            el.innerHTML = "<strong>Constancia técnica.</strong> La fuerza pura no sirve sin la técnica. Asegúrate de aislar el suelo pélvico sin tensar los glúteos ni los muslos.";
+        }
+    }
+
+    // --- Lógica de Heatmap y Roadmap ---
+    function renderHeatmap() {
+        const container = document.getElementById('heatmapContainer');
+        if(!container) return;
+        container.innerHTML = '';
+        if (!user.workoutDates) user.workoutDates = {};
+        
+        let today = new Date();
+        let html = '';
+        // 35 days (5 weeks)
+        for (let i = 34; i >= 0; i--) {
+            let d = new Date(today);
+            d.setDate(today.getDate() - i);
+            let dString = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            let count = user.workoutDates[dString] || 0;
+            
+            let colorClass = 'heat-0';
+            if (count > 0 && count <= 2) colorClass = 'heat-1';
+            else if (count > 2 && count <= 4) colorClass = 'heat-2';
+            else if (count > 4) colorClass = 'heat-3';
+            
+            html += `<div class="heat-box ${colorClass}" title="${dString}: ${count} sesiones"></div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function openRoadmapModal() {
+        renderRoadmap();
+        document.getElementById('roadmapModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('roadmapModal').style.opacity = '1';
+            document.getElementById('roadmapModalContent').classList.add('active');
+        }, 10);
+    }
+
+    function closeRoadmapModal() {
+        document.getElementById('roadmapModal').style.opacity = '0';
+        document.getElementById('roadmapModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('roadmapModal').style.display = 'none', 300);
+    }
+
+    function renderRoadmap() {
+        const list = document.getElementById('roadmapList');
+        if(!list) return;
+        let html = '<div class="roadmap-line"></div>';
+
+        levels.forEach((lvl, index) => {
+            let stateClass = 'locked';
+            let icon = '🔒';
+            
+            if (index < user.currentLevelIndex) {
+                stateClass = 'completed';
+                icon = '✓';
+            } else if (index === user.currentLevelIndex) {
+                stateClass = 'current';
+                icon = '🔥';
+            }
+
+            let nextXpText = index === user.currentLevelIndex && levels[index+1] ? `Progreso hacia nivel ${index+2}: ${user.xp}/${levels[index+1].xpRequired} XP` : '';
+            if (index === user.currentLevelIndex && !levels[index+1]) nextXpText = '¡NIVEL MÁXIMO ALCANZADO!';
+
+            html += `
+                <div class="roadmap-item ${stateClass}">
+                    <div class="roadmap-icon">${icon}</div>
+                    <div class="roadmap-content">
+                        <h3>Nivel ${lvl.id}: ${lvl.name}</h3>
+                        <p>${lvl.benefit}</p>
+                        ${stateClass === 'current' ? `<div style="margin-top: 10px; font-size: 0.75rem; color: var(--primary); font-weight: bold; padding: 4px 8px; background: rgba(56, 189, 248, 0.1); border-radius: 8px; border: 1px solid rgba(56,189,248,0.2); display: inline-block;">${nextXpText}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        list.innerHTML = html;
+    }
+
+    // --- Lógica del Modal Custom ---
+    function openCustomModal() {
+        document.getElementById('customModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('customModal').style.opacity = '1';
+            document.getElementById('customModalContent').classList.add('active');
+        }, 10);
+    }
+
+    function closeCustomModal() {
+        document.getElementById('customModal').style.opacity = '0';
+        document.getElementById('customModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('customModal').style.display = 'none', 300);
+    }
+
+    function startCustomWorkout() {
+        let reps = parseInt(document.getElementById('inpReps').value) || 10;
+        let contract = parseInt(document.getElementById('inpContract').value) || 5;
+        let relax = parseInt(document.getElementById('inpRelax').value) || 5;
+        
+        let customData = { name: "Personalizado", reps, contractTime: contract, relaxTime: relax, xpReward: Math.floor(reps * 1.5), isCustom: true };
+        closeCustomModal();
+        startWorkoutEngine(customData);
+    }
+
+    function openTrainingMenu() {
+        document.getElementById('trainingModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('trainingModal').style.opacity = '1';
+            document.getElementById('trainingModalContent').classList.add('active');
+        }, 10);
+    }
+    
+    function closeTrainingModal() {
+        document.getElementById('trainingModal').style.opacity = '0';
+        document.getElementById('trainingModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('trainingModal').style.display = 'none', 300);
+    }
+
+    function startLevelWorkout() {
+        closeTrainingModal();
+        startWorkout();
+    }
+
+    function openCustomModalFromMenu() {
+        closeTrainingModal();
+        setTimeout(() => { openCustomModal(); }, 350);
+    }
+
+    function startWorkout() {
+        startWorkoutEngine(levels[user.currentLevelIndex]);
+    }
+
+    function startFlicks() {
+        // Flicks train fast twitch muscle fibers: 1s squeeze, 1s release
+        let lvl = levels[user.currentLevelIndex];
+        let reps = lvl.reps * 2; // Twice the reps because it's fast
+        startWorkoutEngine({ 
+            name: "Ráfaga Rápida (Flicks)", reps: reps, contractTime: 1, relaxTime: 1, 
+            xpReward: Math.floor(lvl.xpReward * 0.8), isCustom: true,
+            benefit: "Entrenando fibras de contracción rápida para fortalecer el esfínter velozmente."
+        });
+    }
+
+    // --- Motor de Entrenamiento ---
+    function calculateStreak() {
+        const today = getLocalDateString();
+        const yesterday = getYesterdayDateString();
+        let bonusXP = 0;
+
+        if (user.lastWorkoutDate !== today) {
+            if (!user.lastWorkoutDate) {
+                user.streak = 1; 
+            } else if (user.lastWorkoutDate === yesterday) {
+                user.streak += 1;
+                bonusXP = Math.min(user.streak * 2, 25); 
+            } else {
+                user.streak = 1; 
+            }
+            user.lastWorkoutDate = today;
+        }
+        return bonusXP;
+    }
+
+    // Wait func adaptable a pausas/cancelaciones
+    async function countdown(seconds) {
+        return new Promise(resolve => {
+            let timeLeft = seconds;
+            elTimeText.innerText = timeLeft;
+            
+            let interval = setInterval(() => {
+                if (isCancelled) {
+                    clearInterval(interval);
+                    resolve(false); 
+                    return;
+                }
+                if (!isPaused) {
+                    timeLeft--;
+                    elTimeText.innerText = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        resolve(true); 
+                    }
+                }
+            }, 1000);
+        });
+    }
+
+    function setTimerState(text, cssClass) {
+        elStateText.innerText = text;
+        elTimerCircle.className = `timer-container ${cssClass}`;
+        document.getElementById('timerWrapper').className = "wrapper-" + cssClass;
+        
+        if (typeof pSys !== 'undefined') pSys.state = cssClass;
+        
+        if (cssClass === 'contracting') {
+            elStateText.style.color = 'var(--primary)';
+        } else if (cssClass === 'relaxing') {
+            elStateText.style.color = 'var(--relax)';
+        } else {
+            elStateText.style.color = 'var(--text-muted)';
+        }
+    }
+
+    function togglePause() {
+        if (!isWorkingOut) return;
+        isPaused = !isPaused;
+        if (isPaused) {
+            elPauseBtn.innerHTML = "▶ Reanudar";
+            elPauseBtn.style.background = "var(--relax)";
+            elPauseBtn.style.color = "white";
+            elTimerCircle.classList.add("paused-state");
+        } else {
+            elPauseBtn.innerHTML = "⏸ Pausar";
+            elPauseBtn.style.background = "var(--warning)";
+            elPauseBtn.style.color = "black";
+            elTimerCircle.classList.remove("paused-state");
+        }
+        emitVibration('error'); // Little hiccup feeling
+    }
+
+    function cancelWorkout() {
+        if (!confirm("¿Seguro que quieres detener el entrenamiento? No se guardará tu progreso.")) return;
+        isCancelled = true;
+        isPaused = false; 
+    }
+
+    function startDailyChallenge() {
+        let today = getLocalDateString();
+        if (user.lastDailyDate === today) {
+            alert("Ya completaste el Reto Supremo de hoy. ¡Vuelve mañana para más!");
+            return;
+        }
+        let lvl = levels[user.currentLevelIndex];
+        let p1 = { name: "Calentamiento", reps: Math.max(3, Math.floor(lvl.reps / 2)), contractTime: lvl.contractTime, relaxTime: lvl.relaxTime };
+        let p2 = { name: "El Elevador", type: 'elevator', reps: Math.max(2, Math.floor(lvl.reps * 0.3)), contractTime: lvl.contractTime * 3, relaxTime: lvl.relaxTime * 2 };
+        let p3 = { name: "Micro-Pulsos", type: 'pulse', reps: Math.max(2, Math.floor(lvl.reps * 0.3)), contractTime: lvl.contractTime * 2, relaxTime: lvl.relaxTime };
+        
+        startWorkoutEngine({ 
+            name: "Reto Diario Supremo", 
+            xpReward: lvl.xpReward * 3, 
+            isDaily: true,
+            phases: [p1, p2, p3]
+        });
+    }
+
+    async function startWorkoutEngine(workoutParams) {
+        if (isWorkingOut) return;
+        isWorkingOut = true;
+        isCancelled = false;
+        isPaused = false;
+
+        // UI Reset
+        elStartBtn.style.display = 'none';
+        document.getElementById('actionButtonsWrapper').style.display = 'none';
+        elWorkoutControls.style.display = 'flex';
+        elPauseBtn.innerHTML = "⏸ Pausar";
+        elPauseBtn.style.background = "var(--warning)";
+        elPauseBtn.style.color = "black";
+        
+        rotateTip();
+
+        // Prep sound context (requires gesture)
+        if ('speechSynthesis' in window) window.speechSynthesis.resume();
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (soundMode === 'ocean') initNoise();
+        if (soundMode === 'music') initMusic();
+
+        setTimerState("PREPÁRATE", "idle");
+        playVoice("Prepárate");
+        let completed = await countdown(3);
+        if (!completed) return handleCancel();
+
+        let phasesToRun = workoutParams.phases ? workoutParams.phases : [workoutParams];
+
+        for (let pIdx = 0; pIdx < phasesToRun.length; pIdx++) {
+            if (isCancelled) break;
+            let p = phasesToRun[pIdx];
+            
+            if (workoutParams.phases) {
+                setTimerState(p.name.toUpperCase(), "idle");
+                playVoice(`Iniciando ${p.name}`);
+                completed = await countdown(3);
+                if (!completed) break;
+            }
+
+            for (let i = 1; i <= p.reps; i++) {
+                if (isCancelled) break;
+                elRepsText.innerText = workoutParams.phases ? `Fase ${pIdx+1}: ${i}/${p.reps} Repeticiones` : `${i} / ${p.reps} Repeticiones`;
+                
+                if (p.type === 'elevator') {
+                    let stepTime = p.contractTime / 3;
+                    for (let step=1; step<=3; step++) {
+                        setTimerState(step===3 ? "MÁXIMO" : `SUBE ${step}`, "contracting");
+                        playVoice(step===3 ? "Máximo" : `Sube ${step}`);
+                        emitVibration("contract");
+                        completed = await countdown(Math.max(1, Math.floor(stepTime)));
+                        if(!completed) break;
+                    }
+                    if(!completed) break;
+
+                    setTimerState("RELAJA", "relaxing");
+                    playVoice("Relaja lento");
+                    emitVibration("relax");
+                    completed = await countdown(p.relaxTime);
+                    if(!completed) break;
+                    
+                } else if (p.type === 'pulse') {
+                    setTimerState("MANTÉN", "contracting");
+                    playVoice("Mantén firme");
+                    emitVibration("contract");
+                    completed = await countdown(Math.floor(p.contractTime * 0.7)); 
+                    if(!completed) break;
+                    
+                    let pulses = Math.max(3, Math.floor(p.contractTime * 0.3 * 2));
+                    for(let pulse=1; pulse<=pulses; pulse++) {
+                        setTimerState("¡PULSO!", "contracting");
+                        if(soundMode==='voice' || soundMode==='beep') playTone(600, 'sine', 0.1);
+                        emitVibration("contract");
+                        completed = await countdown(0.5);
+                        if(!completed) break;
+                    }
+                    if(!completed) break;
+                    
+                    setTimerState("RELAJA", "relaxing");
+                    playVoice("Relaja");
+                    emitVibration("relax");
+                    completed = await countdown(p.relaxTime);
+                    if(!completed) break;
+                
+                } else {
+                    setTimerState("CONTRAE", "contracting");
+                    playVoice("Contrae");
+                    emitVibration("contract");
+                    
+                    completed = await countdown(p.contractTime);
+                    if (!completed) break;
+
+                    setTimerState("RELAJA", "relaxing");
+                    playVoice("Relaja");
+                    emitVibration("relax");
+                    
+                    completed = await countdown(p.relaxTime);
+                    if (!completed) break;
+                }
+            }
+        }
+
+        if (isCancelled) {
+            handleCancel();
+        } else {
+            finishWorkout(workoutParams);
+        }
+    }
+
+    function handleCancel() {
+        setTimerState("CANCELADO", "idle");
+        elTimeText.innerText = "0:00";
+        emitVibration('error'); // Vibration error feedback
+        resetWorkoutUI();
+    }
+
+    function resetWorkoutUI() {
+        isWorkingOut = false;
+        isCancelled = false;
+        isPaused = false;
+        setOceanVolume(0, 0.5); 
+        if (typeof setMusicVolume !== 'undefined') setMusicVolume(0, 0.5);
+        elTimerCircle.classList.remove("paused-state");
+        elWorkoutControls.style.display = 'none';
+        elStartBtn.style.display = 'flex';
+        document.getElementById('actionButtonsWrapper').style.display = 'flex';
+        updateUI();
+    }
+
+    function finishWorkout(workoutParams) {
+        setTimerState("¡MISIÓN ÉPICA!", "idle");
+        elTimeText.innerText = "✓";
+        if (typeof pSys !== 'undefined') pSys.burst();
+        
+        playVoice("¡Misión Épica!");
+        emitVibration('success');
+        
+        let bonusXP = calculateStreak();
+        let earnedXP = workoutParams.xpReward + bonusXP;
+        user.xp += earnedXP;
+        
+        user.totalWorkouts = (user.totalWorkouts || 0) + 1;
+        if (workoutParams.contractTime > (user.maxHoldTime || 0)) {
+            user.maxHoldTime = workoutParams.contractTime;
+        }
+        
+        let localDateStr = getLocalDateString();
+        if (!user.workoutDates) user.workoutDates = {};
+        user.workoutDates[localDateStr] = (user.workoutDates[localDateStr] || 0) + 1;
+        
+        if (workoutParams.isDaily) {
+            user.lastDailyDate = localDateStr;
+        }
+
+        let coinsEarned = Math.floor(workoutParams.xpReward / 2);
+        if (user.coins === undefined) user.coins = 0;
+        user.coins += coinsEarned;
+
+        let leveledUp = false;
+        while (true) {
+            let nextLvl = levels[user.currentLevelIndex + 1];
+            if (nextLvl && user.xp >= nextLvl.xpRequired) {
+                user.currentLevelIndex++;
+                leveledUp = true;
+            } else {
+                break;
+            }
+        }
+
+        saveProgress();
+        checkAchievements();
+
+        let toastMsg = `+${workoutParams.xpReward} XP | +${coinsEarned} 🪙`;
+        if (bonusXP > 0) toastMsg += ` (+${bonusXP} racha)`;
+        
+        setTimeout(() => showToast(toastMsg, "Entrenamiento Completado", "⭐"), 500);
+
+        if (leveledUp) {
+            setTimeout(() => alert(`¡NUEVO NIVEL ALCANZADO!\n\nEstás en el Nivel ${levels[user.currentLevelIndex].id}: ${levels[user.currentLevelIndex].name}\n\nRevisa la sección de "Tu cuerpo en este nivel".`), 2500);
+        }
+
+        setTimeout(() => {
+            elStateText.innerText = "LISTO";
+            elTimeText.innerText = "0:00";
+            resetWorkoutUI();
+        }, 3000);
+    }
+
+    // --- Lógica de Logros ---
+    const allAchievements = [
+        { id: 'first_workout', icon: '🌱', name: 'Primera Semilla', desc: 'Comprueba el flujo pélvico completando tu primera sesión.' },
+        { id: 'streak_3', icon: '🔥', name: 'Racha de Fuego', desc: 'Entrena 3 días consecutivos.' },
+        { id: 'hold_10', icon: '⏳', name: 'Fuerza de Voluntad', desc: 'Sostén una contracción por 10 segundos o más.' },
+        { id: 'level_3', icon: '⭐', name: 'Control Maestro', desc: 'Alcanza el Nivel 3 (Control).' },
+        { id: 'workouts_10', icon: '🛡️', name: 'Constancia', desc: 'Completa 10 sesiones en total.' }
+    ];
+
+    function checkAchievements() {
+        if (!user.achievements) user.achievements = [];
+        
+        let newlyUnlocked = false;
+        const unlock = (id) => {
+            if (!user.achievements.includes(id)) {
+                user.achievements.push(id);
+                let ach = allAchievements.find(a => a.id === id);
+                if (ach) {
+                    setTimeout(() => showToast(ach.name), 500);
+                }
+                newlyUnlocked = true;
+            }
+        };
+
+        if (user.totalWorkouts >= 1) unlock('first_workout');
+        if (user.totalWorkouts >= 10) unlock('workouts_10');
+        if (user.streak >= 3) unlock('streak_3');
+        if (user.maxHoldTime >= 10) unlock('hold_10');
+        if (user.currentLevelIndex >= 2) unlock('level_3');
+        
+        if (newlyUnlocked) {
+            saveProgress();
+            renderAchievements();
+        }
+    }
+
+    function showToast(name, title = "Logro Desbloqueado", icon = "🏆") {
+        let toast = document.getElementById('toastNotification');
+        document.getElementById('toastDesc').innerText = name;
+        if(document.getElementById('toastTitle')) document.getElementById('toastTitle').innerText = title;
+        if(document.getElementById('toastIcon')) document.getElementById('toastIcon').innerText = icon;
+        toast.style.bottom = '20px';
+        setTimeout(() => toast.style.bottom = '-100px', 5000);
+        emitVibration('success');
+    }
+
+    function openAchievementsModal() {
+        renderAchievements();
+        document.getElementById('achievementsModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('achievementsModal').style.opacity = '1';
+            document.getElementById('achievementsModalContent').classList.add('active');
+        }, 10);
+    }
+
+    function closeAchievementsModal() {
+        document.getElementById('achievementsModal').style.opacity = '0';
+        document.getElementById('achievementsModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('achievementsModal').style.display = 'none', 300);
+    }
+
+    function renderAchievements() {
+        const list = document.getElementById('achievementsList');
+        list.innerHTML = '';
+        if (!user.achievements) user.achievements = [];
+        
+        allAchievements.forEach(ach => {
+            let isUnlocked = user.achievements.includes(ach.id);
+            let bg = isUnlocked ? 'rgba(56, 189, 248, 0.1)' : 'rgba(255,255,255,0.02)';
+            let border = isUnlocked ? 'var(--primary)' : '#334155';
+            let opacity = isUnlocked ? '1' : '0.4';
+            
+            list.innerHTML += `
+                <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: ${bg}; border: 1px solid ${border}; border-radius: 12px; opacity: ${opacity}; transition: transform 0.2s;">
+                    <div style="font-size: 2rem; width: 40px; text-align: center;">${isUnlocked ? ach.icon : '🔒'}</div>
+                    <div style="text-align: left; flex: 1;">
+                        <div style="font-weight: bold; color: ${isUnlocked ? 'var(--text-main)' : 'var(--text-muted)'}">${ach.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${ach.desc}</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // --- Lógica del Heatmap (Estadísticas) ---
+    function openStatsModal() {
+        renderHeatmap();
+        document.getElementById('statsModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('statsModal').style.opacity = '1';
+            document.getElementById('statsModalContent').classList.add('active');
+        }, 10);
+    }
+    
+    function closeStatsModal() {
+        document.getElementById('statsModal').style.opacity = '0';
+        document.getElementById('statsModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('statsModal').style.display = 'none', 300);
+    }
+
+    function renderHeatmap() {
+        const container = document.getElementById('heatmapContainer');
+        container.innerHTML = '';
+        if (!user.workoutDates) user.workoutDates = {};
+        
+        let today = new Date();
+        // 28 days = 4 weeks * 7 days
+        for (let i = 27; i >= 0; i--) {
+            let d = new Date(today);
+            d.setDate(today.getDate() - i);
+            let dString = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            let count = user.workoutDates[dString] || 0;
+            
+            let bg = '#1e293b'; // none
+            if (count === 1) bg = 'rgba(56, 189, 248, 0.4)';
+            else if (count === 2) bg = 'rgba(56, 189, 248, 0.7)';
+            else if (count >= 3) bg = 'rgba(56, 189, 248, 1)'; // high
+
+            let tooltip = `${dString}: ${count} entrenamientos`;
+            container.innerHTML += `<div title="${tooltip}" style="width: 100%; aspect-ratio: 1; background: ${bg}; border-radius: 4px; transition: transform 0.2s;"></div>`;
+        }
+    }
+
+    // --- Lógica de Recordatorios ---
+    function openRemindersModal() {
+        if (user.reminderTime) document.getElementById('reminderTimeInput').value = user.reminderTime;
+        document.getElementById('reminderStatus').innerText = user.reminderTime ? `Activo: ${user.reminderTime}` : 'Sin recordatorio';
+        document.getElementById('remindersModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('remindersModal').style.opacity = '1';
+            document.getElementById('remindersModalContent').classList.add('active');
+        }, 10);
+    }
+
+    function closeRemindersModal() {
+        document.getElementById('remindersModal').style.opacity = '0';
+        document.getElementById('remindersModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('remindersModal').style.display = 'none', 300);
+    }
+
+    function saveReminder() {
+        if ("Notification" in window) {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    let timeVal = document.getElementById('reminderTimeInput').value;
+                    user.reminderTime = timeVal;
+                    user.reminderSentToday = null;
+                    document.getElementById('reminderStatus').innerText = `Guardado: te avisaremos a las ${timeVal}`;
+                    saveProgress();
+                    setTimeout(closeRemindersModal, 1500);
+                } else {
+                    alert("Necesitamos permisos de notificaciones para avisarte.");
+                }
+            });
+        } else {
+            alert("Tu navegador no soporta Notificaciones Web.");
+        }
+    }
+
+    function clearReminder() {
+        user.reminderTime = null;
+        document.getElementById('reminderStatus').innerText = 'Recordatorio desactivado';
+        saveProgress();
+    }
+
+    // Intervalo de evaluación de recordatorios en vivo
+    setInterval(() => {
+        if (!user.reminderTime) return;
+        if (Notification.permission !== "granted") return;
+        
+        let now = new Date();
+        let currentStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        let localDateStr = getLocalDateString();
+        
+        if (currentStr === user.reminderTime && user.reminderSentToday !== localDateStr) {
+            user.reminderSentToday = localDateStr;
+            saveProgress();
+            new Notification("Kegel Flow", {
+                body: "¡Es tu momento zen! Toca aquí para iniciar tus ejercicios pélvicos.",
+                icon: "icon.svg"
+            });
+        }
+    }, 60000); // Evalúa cada minuto
+
+    // --- Lógica Tema Claro/Oscuro ---
+    let isLightMode = localStorage.getItem('kegelLightMode') === 'true';
+    const themeBtn = document.getElementById('themeBtn');
+    function initTheme() {
+        if (isLightMode) {
+            document.documentElement.setAttribute('data-theme', 'light');
+            if(themeBtn) themeBtn.innerText = '☀️';
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            if(themeBtn) themeBtn.innerText = '🌙';
+        }
+    }
+    function toggleTheme() {
+        isLightMode = !isLightMode;
+        localStorage.setItem('kegelLightMode', isLightMode);
+        initTheme();
+    }
+    initTheme();
+
+    // --- Guardado y Logs (Archivos) ---
+    function openSettingsModal() {
+        document.getElementById('settingsModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('settingsModal').style.opacity = '1';
+            document.getElementById('settingsModalContent').classList.add('active');
+        }, 10);
+    }
+    function closeSettingsModal() {
+        document.getElementById('settingsModal').style.opacity = '0';
+        document.getElementById('settingsModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('settingsModal').style.display = 'none', 300);
+    }
+    function downloadBackup() {
+        let str = JSON.stringify(user);
+        let blob = new Blob([str], {type: "application/json"});
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = `KegelFlow_Backup_${getLocalDateString()}.json`;
+        a.click();
+    }
+    function importBackup(event) {
+        let file = event.target.files[0];
+        if (!file) return;
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let importedFile = JSON.parse(e.target.result);
+                if (importedFile.xp !== undefined) {
+                    user = { ...user, ...importedFile };
+                    saveProgress();
+                    updateUI();
+                    alert("¡Progreso restaurado con éxito!");
+                    closeSettingsModal();
+                } else throw new Error();
+            } catch(err) { alert("El archivo no es válido."); }
+        };
+        reader.readAsText(file);
+    }
+
+
+
+    // --- Sistema Zen Garden y Tienda ---
+    const shopItems = {
+        pots: [
+            { id: 'pot_greda', name: 'Maceta de Greda', emoji: '🟫', price: 50 },
+            { id: 'pot_wood', name: 'Tronco Hueco', emoji: '🪵', price: 150 },
+            { id: 'pot_vasija', name: 'Vasija Antigua', emoji: '🏺', price: 300 },
+            { id: 'pot_cosmic', name: 'Maceta Cósmica', emoji: '🧊', price: 500 }
+        ],
+        plants: [
+            { id: 'plant_brote', name: 'Brote de Vida', emoji: '🌱', price: 50 },
+            { id: 'plant_helecho', name: 'Helecho Calmo', emoji: '🌿', price: 150 },
+            { id: 'plant_cactus', name: 'Cactus Fuerte', emoji: '🌵', price: 200 },
+            { id: 'plant_girasol', name: 'Girasol Energía', emoji: '🌻', price: 350 },
+            { id: 'plant_bambu', name: 'Bambú Constante', emoji: '🎋', price: 500 },
+            { id: 'plant_sakura', name: 'Cerezo Zen', emoji: '🌸', price: 800 }
+        ]
+    };
+
+    let selectedDecoratorSlot = 0;
+
+    function initGardenSystem() {
+        if (user.coins === undefined) user.coins = 0;
+        if (!user.inventory) user.inventory = [];
+        if (!user.garden || user.garden.length !== 4) user.garden = [null, null, null, null];
+    }
+
+    function renderGarden() {
+        initGardenSystem();
+        document.getElementById('topCoinsDisplay').innerText = user.coins || 0;
+        const garden = document.getElementById('zenGarden');
+        if(!garden) return;
+        garden.innerHTML = '';
+        
+        for (let i = 0; i < 4; i++) {
+            let slot = user.garden[i];
+            let html = `<div class="garden-slot" onclick="openDecorateModal(${i})">`;
+            
+            if (slot) {
+                let plantItem = shopItems.plants.find(p => p.id === slot.plant);
+                let potItem = shopItems.pots.find(p => p.id === slot.pot);
+                
+                if (plantItem) html += `<div class="garden-plant">${plantItem.emoji}</div>`;
+                if (potItem) html += `<div class="garden-pot">${potItem.emoji}</div>`;
+                
+                if (!plantItem && !potItem) html += `<div class="slot-add">+</div>`;
+            } else {
+                html += `<div class="slot-add">+</div>`;
+            }
+            html += `</div>`;
+            garden.innerHTML += html;
+        }
+    }
+
+    function openShopModal() {
+        initGardenSystem();
+        document.getElementById('shopCoinsDisplay').innerText = user.coins;
+        
+        const listPots = document.getElementById('shopListPots');
+        const listPlants = document.getElementById('shopListPlants');
+        listPots.innerHTML = '';
+        listPlants.innerHTML = '';
+        
+        const renderItem = (item) => {
+            let owned = user.inventory.includes(item.id);
+            let canAfford = user.coins >= item.price;
+            let btnHtml = owned ? `<button class="shop-btn" disabled>En Propiedad</button>` : 
+                 `<button class="shop-btn" ${canAfford ? '' : 'disabled'} onclick="buyItem('${item.id}', ${item.price})">Comprar (${item.price} 🪙)</button>`;
+                 
+            return `
+                <div class="shop-item">
+                    <div style="display: flex; align-items: center;">
+                        <div class="shop-item-icon">${item.emoji}</div>
+                        <div class="shop-item-info">
+                            <div class="shop-item-title">${item.name}</div>
+                            <div class="shop-item-price">${item.price} 🪙</div>
+                        </div>
+                    </div>
+                    ${btnHtml}
+                </div>
+            `;
+        };
+        
+        shopItems.pots.forEach(item => listPots.innerHTML += renderItem(item));
+        shopItems.plants.forEach(item => listPlants.innerHTML += renderItem(item));
+        
+        document.getElementById('shopModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('shopModal').style.opacity = '1';
+            document.getElementById('shopModalContent').classList.add('active');
+        }, 10);
+    }
+
+    function buyItem(id, price) {
+        if (user.coins >= price) {
+            user.coins -= price;
+            user.inventory.push(id);
+            saveProgress();
+            emitVibration('success');
+            openShopModal(); 
+            renderGarden(); 
+        }
+    }
+
+    function closeShopModal() {
+        document.getElementById('shopModal').style.opacity = '0';
+        document.getElementById('shopModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('shopModal').style.display = 'none', 300);
+    }
+
+    function openDecorateModal(slotIndex) {
+        selectedDecoratorSlot = slotIndex;
+        const listPots = document.getElementById('decoratePotsList');
+        const listPlants = document.getElementById('decoratePlantsList');
+        
+        let currentSlot = user.garden[slotIndex] || { pot: null, plant: null };
+        let uniqueInv = [...new Set(user.inventory)];
+        
+        let ownedPots = [];
+        let ownedPlants = [];
+        
+        uniqueInv.forEach(id => {
+            let available = user.inventory.filter(i => i === id).length;
+            let pItem = shopItems.pots.find(p => p.id === id);
+            if (pItem) ownedPots.push({ ...pItem, available });
+            let plItem = shopItems.plants.find(p => p.id === id);
+            if (plItem) ownedPlants.push({ ...plItem, available });
+        });
+        
+        if (currentSlot.pot && !ownedPots.find(p => p.id === currentSlot.pot)) {
+            let pItem = shopItems.pots.find(p => p.id === currentSlot.pot);
+            if (pItem) ownedPots.push({ ...pItem, available: 0 });
+        }
+        if (currentSlot.plant && !ownedPlants.find(p => p.id === currentSlot.plant)) {
+            let plItem = shopItems.plants.find(p => p.id === currentSlot.plant);
+            if (plItem) ownedPlants.push({ ...plItem, available: 0 });
+        }
+        
+        listPots.innerHTML = ownedPots.length ? '' : '<span style="color: var(--text-muted); font-size: 0.8rem; margin: auto;">No tienes macetas aún. ¡Visita la Tienda!</span>';
+        listPlants.innerHTML = ownedPlants.length ? '' : '<span style="color: var(--text-muted); font-size: 0.8rem; margin: auto;">No tienes plantas aún. ¡Visita la Tienda!</span>';
+        
+        ownedPots.forEach(item => {
+            let isSelected = currentSlot.pot === item.id;
+            let disabled = !isSelected && item.available <= 0;
+            listPots.innerHTML += `
+                <div class="inv-item ${isSelected ? 'selected' : ''}" style="${disabled ? 'opacity: 0.4; cursor: not-allowed; filter: grayscale(1);' : ''}" ${!disabled ? `onclick="applyDecoration('pot', '${item.id}')"` : ''}>
+                    <div class="inv-item-icon">${item.emoji}</div>
+                    <div class="inv-item-name">${item.name}</div>
+                    <div style="font-size: 0.65rem; color: var(--warning); margin-top: 4px; font-weight: bold;">Disp: ${isSelected ? item.available + 1 : item.available}</div>
+                </div>
+            `;
+        });
+        
+        ownedPlants.forEach(item => {
+            let isSelected = currentSlot.plant === item.id;
+            let disabled = !isSelected && item.available <= 0;
+            listPlants.innerHTML += `
+                <div class="inv-item ${isSelected ? 'selected' : ''}" style="${disabled ? 'opacity: 0.4; cursor: not-allowed; filter: grayscale(1);' : ''}" ${!disabled ? `onclick="applyDecoration('plant', '${item.id}')"` : ''}>
+                    <div class="inv-item-icon">${item.emoji}</div>
+                    <div class="inv-item-name">${item.name}</div>
+                    <div style="font-size: 0.65rem; color: var(--warning); margin-top: 4px; font-weight: bold;">Disp: ${isSelected ? item.available + 1 : item.available}</div>
+                </div>
+            `;
+        });
+        
+        document.getElementById('decorateModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('decorateModal').style.opacity = '1';
+            document.getElementById('decorateModalContent').classList.add('active');
+        }, 10);
+    }
+
+    function closeDecorateModal() {
+        document.getElementById('decorateModal').style.opacity = '0';
+        document.getElementById('decorateModalContent').classList.remove('active');
+        setTimeout(() => document.getElementById('decorateModal').style.display = 'none', 300);
+    }
+
+    function applyDecoration(type, itemId) {
+        let slot = user.garden[selectedDecoratorSlot];
+        if (!slot) slot = { pot: null, plant: null };
+        
+        if (type === 'pot' && slot.pot) user.inventory.push(slot.pot);
+        if (type === 'plant' && slot.plant) user.inventory.push(slot.plant);
+        
+        let invIdx = user.inventory.indexOf(itemId);
+        if (invIdx > -1) user.inventory.splice(invIdx, 1);
+        
+        if (type === 'pot') slot.pot = itemId;
+        else if (type === 'plant') slot.plant = itemId;
+        
+        user.garden[selectedDecoratorSlot] = slot;
+        saveProgress();
+        renderGarden();
+        openDecorateModal(selectedDecoratorSlot);
+        emitVibration('success');
+    }
+
+    function removeDecoration() {
+        let slot = user.garden[selectedDecoratorSlot];
+        if (slot) {
+            if (slot.pot) user.inventory.push(slot.pot);
+            if (slot.plant) user.inventory.push(slot.plant);
+        }
+        user.garden[selectedDecoratorSlot] = null;
+        saveProgress();
+        renderGarden();
+        closeDecorateModal();
+        emitVibration('success');
+    }
+
+    // --- Premium UI Animations (Particles & Counters) ---
+    function animateValue(elementId, start, end, duration) {
+        let el = document.getElementById(elementId);
+        if (!el) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(easeOut * (end - start) + start);
+            el.innerText = current;
+            if (progress < 1) window.requestAnimationFrame(step);
+            else el.innerText = end;
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    class ParticleSystem {
+        constructor() {
+            this.canvas = document.getElementById('particlesCanvas');
+            if(!this.canvas) return;
+            this.ctx = this.canvas.getContext('2d');
+            this.particles = [];
+            this.state = 'idle'; // idle, contracting, relaxing, finish
+            this.resize();
+            window.addEventListener('resize', () => this.resize());
+            for(let i=0; i<150; i++) this.addParticle();
+            this.loop();
+        }
+        resize() {
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+        }
+        addParticle(x, y, isBurst = false) {
+            let isBlue = Math.random() > 0.5;
+            this.particles.push({
+                x: x || Math.random() * this.canvas.width,
+                y: y || Math.random() * this.canvas.height + (isBurst?0:this.canvas.height),
+                vx: isBurst ? (Math.random()-0.5)*15 : (Math.random()-0.5)*1.2,
+                vy: isBurst ? (Math.random()-0.5)*15 : (Math.random()*-1.5 - 0.5),
+                size: isBurst ? Math.random() * 5 + 2 : Math.random() * 4.5 + 2,
+                color: isBurst ? `hsl(${Math.random()*360}, 100%, 70%)` : `hsla(${isBlue ? 200 : 250}, 100%, 85%, ${Math.random()*0.3+0.2})`,
+                life: isBurst ? 1.0 : Infinity
+            });
+        }
+        burst() {
+            this.state = 'finish';
+            for(let i=0; i<120; i++) this.addParticle(this.canvas.width/2, this.canvas.height/2 - 100, true);
+        }
+        loop() {
+            this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height);
+            let speedMult = this.state === 'contracting' ? 4 : (this.state === 'relaxing' ? 0.3 : 1);
+            
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+                let p = this.particles[i];
+                p.x += p.vx * speedMult;
+                p.y += p.vy * speedMult;
+                
+                if (p.life !== Infinity) {
+                    p.life -= 0.01;
+                    p.vy += 0.2; 
+                    if (p.life <= 0) { this.particles.splice(i, 1); continue; }
+                } else {
+                    if (this.state === 'contracting') {
+                        p.x += (this.canvas.width/2 - p.x) * 0.02;
+                    }
+                    if (p.y < -10) p.y = this.canvas.height + 10;
+                    if (p.x < -10) p.x = this.canvas.width + 10;
+                    if (p.x > this.canvas.width + 10) p.x = -10;
+                }
+                
+                this.ctx.fillStyle = p.color;
+                this.ctx.globalAlpha = p.life !== Infinity ? Math.max(0, p.life) : 1;
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                this.ctx.fill();
+            }
+            requestAnimationFrame(() => this.loop());
+        }
+    }
+    const pSys = new ParticleSystem();
+
+    // --- Onboarding & Academy ---
+    function checkOnboarding() {
+        if (!user.goal) {
+            document.getElementById('onboardingModal').style.display = 'flex';
+            document.getElementById('onboardingModal').style.opacity = '1';
+        }
+    }
+    
+    function selectGoal(goalId, goalName) {
+        user.goal = goalId;
+        saveProgress();
+        document.getElementById('onboardingModal').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('onboardingModal').style.display = 'none';
+            showToast("Objetivo guardado");
+            rotateTip();
+        }, 300);
+    }
+
+    function openAcademyModal() {
+        document.getElementById('academyModal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('academyModal').style.opacity = '1';
+            document.getElementById('academyModalContent').classList.add('active');
+        }, 10);
+    }
+    
+    function closeAcademyModal() {
+        document.getElementById('academyModal').style.opacity = '0';
+        document.getElementById('academyModalContent').classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('academyModal').style.display = 'none';
+            document.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
+        }, 300);
+    }
+
+    // Init
+    loadProgress();
+    if (!user.achievements) user.achievements = [];
+    if (!user.workoutDates) user.workoutDates = {};
+    updateUI();
+    checkOnboarding();
+</script>
+
+</body>
+</html>
