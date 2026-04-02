@@ -156,9 +156,7 @@
     function setMusicVolume(vol, duration=2) {
         if (!ambientGain) return;
         try {
-            ambientGain.gain.cancelScheduledValues(audioCtx.currentTime);
-            ambientGain.gain.setValueAtTime(ambientGain.gain.value, audioCtx.currentTime);
-            ambientGain.gain.linearRampToValueAtTime(vol * masterVolume, audioCtx.currentTime + duration);
+            ambientGain.gain.setTargetAtTime(vol * masterVolume, audioCtx.currentTime, duration / 4);
         } catch(e) {}
     }
 
@@ -209,9 +207,7 @@
     function setOceanVolume(targetVolume, duration = 1.0) {
         if (!noiseGain) return;
         try {
-            noiseGain.gain.cancelScheduledValues(audioCtx.currentTime);
-            noiseGain.gain.setValueAtTime(noiseGain.gain.value, audioCtx.currentTime);
-            noiseGain.gain.linearRampToValueAtTime(targetVolume * masterVolume, audioCtx.currentTime + duration);
+            noiseGain.gain.setTargetAtTime(targetVolume * masterVolume, audioCtx.currentTime, duration / 4);
         } catch(e) {}
     }
     
@@ -746,18 +742,14 @@
                 let elapsed = (timestamp - startTime - pausedTime) / 1000;
                 let timeLeft = Math.max(0, seconds - elapsed);
                 
-                // Formatear si tiene decimales
-                if (seconds % 1 !== 0 && timeLeft > 0) {
-                    elTimeText.innerText = timeLeft.toFixed(1);
-                } else {
-                    elTimeText.innerText = Math.ceil(timeLeft);
-                }
-
-                if (timeLeft <= 0) {
-                    elTimeText.innerText = "0";
-                    resolve(true);
-                } else {
+                // Mostrar siempre 2 decimales para mayor precisión
+                if (timeLeft > 0) {
+                    let tStr = timeLeft.toFixed(2).split('.');
+                    elTimeText.innerHTML = `${tStr[0]}<span style="font-size: 0.45em; opacity: 0.85; padding-left: 2px;">.${tStr[1]}</span>`;
                     reqId = requestAnimationFrame(update);
+                } else {
+                    elTimeText.innerHTML = `0<span style="font-size: 0.45em; opacity: 0.85; padding-left: 2px;">.00</span>`;
+                    resolve(true);
                 }
             };
             reqId = requestAnimationFrame(update);
@@ -1061,11 +1053,16 @@
 
     // --- Lógica de Logros ---
     const allAchievements = [
-        { id: 'first_workout', icon: '🌱', name: 'Primera Semilla', desc: 'Comprueba el flujo pélvico completando tu primera sesión.' },
-        { id: 'streak_3', icon: '🔥', name: 'Racha de Fuego', desc: 'Entrena 3 días consecutivos.' },
-        { id: 'hold_10', icon: '⏳', name: 'Fuerza de Voluntad', desc: 'Sostén una contracción por 10 segundos o más.' },
-        { id: 'level_3', icon: '⭐', name: 'Control Maestro', desc: 'Alcanza el Nivel 3 (Control).' },
-        { id: 'workouts_10', icon: '🛡️', name: 'Constancia', desc: 'Completa 10 sesiones en total.' }
+        { id: 'first_workout', icon: '🌱', name: 'Primera Semilla', desc: 'Comprueba el flujo pélvico completando tu primera sesión.', xpReward: 50, coinReward: 10 },
+        { id: 'workouts_10', icon: '🛡️', name: 'Constancia', desc: 'Completa 10 sesiones en total.', xpReward: 200, coinReward: 50 },
+        { id: 'workouts_30', icon: '⛩️', name: 'Maestro Constante', desc: 'Completa 30 sesiones en total.', xpReward: 500, coinReward: 150 },
+        { id: 'streak_3', icon: '🔥', name: 'Racha de Fuego', desc: 'Entrena 3 días consecutivos.', xpReward: 100, coinReward: 25 },
+        { id: 'streak_7', icon: '⚙️', name: 'Racha de Acero', desc: 'Entrena 7 días consecutivos.', xpReward: 300, coinReward: 75 },
+        { id: 'streak_14', icon: '👑', name: 'Racha Legendaria', desc: 'Entrena 14 días consecutivos.', xpReward: 800, coinReward: 200 },
+        { id: 'hold_10', icon: '⏳', name: 'Fuerza de Voluntad', desc: 'Sostén una contracción por 10 segundos o más.', xpReward: 100, coinReward: 30 },
+        { id: 'level_3', icon: '⭐', name: 'Control Maestro', desc: 'Alcanza el Nivel 3 (Control).', xpReward: 300, coinReward: 100 },
+        { id: 'level_5', icon: '🌟', name: 'Maestría Absoluta', desc: 'Alcanza el Nivel 5 (Maestría Pélvica).', xpReward: 1000, coinReward: 300 },
+        { id: 'first_plant', icon: '🪴', name: 'Jardín Floreciente', desc: 'Planta tu primera semilla en el Jardín Zen.', xpReward: 150, coinReward: 50 }
     ];
 
     function checkAchievements() {
@@ -1077,8 +1074,23 @@
                 user.achievements.push(id);
                 let ach = allAchievements.find(a => a.id === id);
                 if (ach) {
+                    if (ach.xpReward) user.xp += ach.xpReward;
+                    if (ach.coinReward) {
+                        if (user.coins === undefined) user.coins = 0;
+                        user.coins += ach.coinReward;
+                    }
+
                     setTimeout(() => {
-                        showToast(ach.name);
+                        let rewardText = "";
+                        if (ach.xpReward) rewardText += `+${ach.xpReward} XP `;
+                        if (ach.coinReward) rewardText += `| +${ach.coinReward} 🪙`;
+
+                        showToast(ach.name, "Misión Completada", ach.icon);
+                        if (rewardText !== "") {
+                            setTimeout(() => {
+                                showToast(rewardText, "Recompensas", "🎁");
+                            }, 3500);
+                        }
                         spawnConfetti();
                     }, 500);
                 }
@@ -1088,9 +1100,16 @@
 
         if (user.totalWorkouts >= 1) unlock('first_workout');
         if (user.totalWorkouts >= 10) unlock('workouts_10');
+        if (user.totalWorkouts >= 30) unlock('workouts_30');
         if (user.streak >= 3) unlock('streak_3');
+        if (user.streak >= 7) unlock('streak_7');
+        if (user.streak >= 14) unlock('streak_14');
         if (user.maxHoldTime >= 10) unlock('hold_10');
         if (user.currentLevelIndex >= 2) unlock('level_3');
+        if (user.currentLevelIndex >= 4) unlock('level_5');
+        
+        let hasPlant = user.garden && user.garden.some(s => s && s.plant);
+        if (hasPlant) unlock('first_plant');
         
         if (newlyUnlocked) {
             saveProgress();
@@ -1128,12 +1147,21 @@
             let border = isUnlocked ? 'var(--primary)' : '#334155';
             let opacity = isUnlocked ? '1' : '0.4';
             
+            let rewardsHtml = '';
+            if (ach.xpReward || ach.coinReward) {
+                rewardsHtml = `<div style="font-size: 0.75rem; font-weight: bold; margin-top: 6px; color: ${isUnlocked ? 'var(--primary)' : 'var(--warning)'}; display: flex; gap: 10px;">`;
+                if (ach.xpReward) rewardsHtml += `<span>✨ ${ach.xpReward} XP</span>`;
+                if (ach.coinReward) rewardsHtml += `<span>🪙 ${ach.coinReward}</span>`;
+                rewardsHtml += `</div>`;
+            }
+
             list.innerHTML += `
                 <div style="display: flex; align-items: center; gap: 15px; padding: 12px; background: ${bg}; border: 1px solid ${border}; border-radius: 12px; opacity: ${opacity}; transition: transform 0.2s;">
                     <div style="font-size: 2rem; width: 40px; text-align: center;">${isUnlocked ? ach.icon : '🔒'}</div>
                     <div style="text-align: left; flex: 1;">
                         <div style="font-weight: bold; color: ${isUnlocked ? 'var(--text-main)' : 'var(--text-muted)'}">${ach.name}</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${ach.desc}</div>
+                        ${rewardsHtml}
                     </div>
                 </div>
             `;
@@ -1558,6 +1586,7 @@
         
         user.garden[selectedDecoratorSlot] = slot;
         saveProgress();
+        checkAchievements();
         renderGarden();
         openDecorateModal(selectedDecoratorSlot);
         emitVibration('success');

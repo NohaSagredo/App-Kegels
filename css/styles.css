@@ -253,7 +253,7 @@
         }
 
         .state-text { font-size: 1.15rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; text-align: center; color: var(--text-main); transition: color 0.5s; text-shadow: 0 2px 5px rgba(0,0,0,0.6);}
-        .time-text { font-size: 4.8rem; font-weight: 600; line-height: 1.1; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5);}
+        .time-text { font-size: 4.8rem; font-weight: 600; line-height: 1.1; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.5); font-variant-numeric: tabular-nums; }
         .reps-text { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 500;}
 
         /* Visual States */
