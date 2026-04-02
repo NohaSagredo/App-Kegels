@@ -67,6 +67,7 @@
             --modal-bg: rgba(26, 10, 26, 0.8);
         }
 
+        html { background-color: var(--bg-color); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 
         @keyframes flowBackground {
@@ -84,7 +85,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 1rem;
+            padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
         }
 
         [data-theme="light"] body {
