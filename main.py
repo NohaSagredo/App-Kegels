@@ -14,6 +14,6 @@ if __name__ == '__main__':
     
     # Start the app
     try:
-        eel.start('kegels.html', size=(400, 700))
+        eel.start('index.html', size=(400, 700))
     except (SystemExit, MemoryError, KeyboardInterrupt):
         pass

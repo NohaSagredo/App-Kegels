@@ -1,6 +1,6 @@
 const CACHE_NAME = 'kegel-flow-v7';
 const urlsToCache = [
-  './kegels.html',
+  './index.html',
   './manifest.json',
   './icon.svg',
   './css/styles.css',
@@ -39,7 +39,7 @@ self.addEventListener('fetch', event => {
         return response;
     }).catch(() => {
         return caches.match(event.request).then(res => {
-            return res || caches.match('./kegels.html');
+            return res || caches.match('./index.html');
         });
     })
   );
@@ -73,9 +73,9 @@ self.addEventListener('notificationclick', event => {
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
       for (let client of windowClients) {
-        if (client.url.includes('kegels.html') && 'focus' in client) return client.focus();
+        if (client.url.includes('index.html') && 'focus' in client) return client.focus();
       }
-      if (clients.openWindow) return clients.openWindow('./kegels.html');
+      if (clients.openWindow) return clients.openWindow('./index.html');
     })
   );
 });

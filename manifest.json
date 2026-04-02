@@ -2,7 +2,7 @@
   "name": "Kegel Flow",
   "short_name": "Kegel Flow",
   "description": "Entrenamiento de suelo pélvico RPG",
-  "start_url": "kegels.html",
+  "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f172a",
