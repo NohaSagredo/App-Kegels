@@ -16,12 +16,19 @@
 <canvas id="particlesCanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
 
 <div class="app-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; position: relative; z-index: 10;">
-        <div style="display: flex; gap: 10px; align-items: center;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; position: relative; z-index: 10; width: 100%;">
+        <div style="display: flex; gap: 10px; align-items: center; flex: 1; min-width: max-content;">
             <span class="streak-badge" id="streakBadge">🔥 0</span>
             <div class="profile-avatar" onclick="openProfileModal()" style="font-size: 1.5rem; width: 38px; height: 38px; border-width: 2px;" id="topAvatar" title="Mi Perfil">😊</div>
         </div>
-        <div style="display: flex; gap: 15px; align-items: center;">
+        
+        <div class="achievements-marquee-container" style="flex: 2; overflow: hidden; white-space: nowrap; margin: 0 10px; background: rgba(0,0,0,0.3); border-radius: 50px; padding: 4px 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); position: relative; height: 30px; display: flex; align-items: center;">
+            <div id="achievementsMarquee" class="marquee-content">
+                No hay logros aún. ¡Empieza a entrenar!
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; align-items: center; flex: 1; justify-content: flex-end; min-width: max-content;">
             <div id="coinBadge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--warning); padding: 5px 12px; border-radius: 50px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 10px rgba(245, 158, 11, 0.1);" onclick="openShopModal()" title="Tienda Zen">🪙 <span id="topCoinsDisplay">0</span></div>
             <button class="sound-btn" id="soundToggle" onclick="toggleSound()">🔊</button>
         </div>
@@ -118,6 +125,7 @@
     
     <!-- Zen Garden -->
     <div id="zenGarden" class="zen-garden"></div>
+    <div id="focusOverlay" class="focus-overlay"></div>
 </div>
 
 <div class="modal-overlay" id="settingsModal">
@@ -149,6 +157,22 @@
 </div>
 
 
+<!-- Feedback Modal -->
+<div class="modal-overlay" id="feedbackModal" style="z-index: 5500;">
+    <div class="modal" id="feedbackModalContent" style="transform: translateY(0); max-width: 400px; opacity: 1;">
+        <h2>¿Cómo estuvo la misión?</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Ajustaremos la intensidad de las próximas sesiones para que siempre sea duro, pero posible.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 0.5rem;">
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #22c55e, #16a34a); color:#fff;" onclick="submitFeedback(0.10, 'Muy Fácil')">🟢 Muy fácil</button>
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #84cc16, #65a30d); color:#fff;" onclick="submitFeedback(0.05, 'Fácil')">🟡 Fácil</button>
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #eab308, #ca8a04); color:#fff;" onclick="submitFeedback(0.02, 'Normal')">🟠 Normal</button>
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #fb923c, #ea580c); color:#fff;" onclick="submitFeedback(0.00, 'Difícil')">🔴 Difícil (Punto Dulce)</button>
+            <button class="btn" style="margin:0; background: linear-gradient(135deg, #f43f5e, #be123c); color:#fff;" onclick="submitFeedback(-0.05, 'Muy Difícil')">🟣 Muy difícil</button>
+            <button class="btn-reset" style="margin:0; border-color: var(--danger); color: var(--danger);" onclick="submitFeedback(-0.15, 'Fallida')">💀 No logré completarla</button>
+        </div>
+    </div>
+</div>
 
 <!-- Onboarding Modal -->
 <div class="modal-overlay" id="onboardingModal" style="background: var(--bg-color); z-index: 3000;">
@@ -344,13 +368,15 @@
 <!-- Profile Modal -->
 <div class="modal-overlay" id="profileModal" style="z-index: 4500;">
     <div class="modal" id="profileModalContent" style="max-height: 85vh; overflow-y: auto;">
-        <div class="profile-header">
+        <div class="profile-header" style="position: relative; width: 100%;">
+            <button class="btn-custom" style="position: absolute; top: -15px; right: -10px; width: auto; padding: 6px 12px; font-size: 0.8rem; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onclick="openEditProfileModal()">✏️ Editar</button>
             <div class="profile-avatar" id="profileAvatar" onclick="toggleAvatarPicker()">😊</div>
             <div id="profileName" style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Guerrero Kegel</div>
             <div id="profileLevel" style="font-size: 0.85rem; color: var(--primary); font-weight: 600;"></div>
+            <div id="profileGender" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;"></div>
         </div>
         <div id="avatarPickerContainer" style="display: none; margin-bottom: 1rem;">
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Elige tu avatar</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Elige tu avatar base</div>
             <div class="avatar-picker" id="avatarPicker"></div>
         </div>
         <div class="profile-stats" id="profileStats"></div>
@@ -366,6 +392,48 @@
         <button class="btn-reset" onclick="closeProfileModal()">Cerrar</button>
     </div>
 </div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editProfileModal" style="z-index: 4600;">
+    <div class="modal" id="editProfileModalContent" style="max-height: 85vh; overflow-y: auto;">
+        <h2 style="margin-bottom: 1.5rem;">Editar Perfil</h2>
+        
+        <div class="input-group">
+            <label>Nombre de Usuario</label>
+            <input type="text" id="inpProfileName" placeholder="Ej: Guerrero Pélvico" maxlength="25">
+        </div>
+        
+        <div class="input-group">
+            <label>Sexo / Género</label>
+            <select id="inpProfileGender" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--surface-border); box-sizing: border-box; font-family: inherit; margin-top: 5px;">
+                <option value="" style="color: black;">Seleccionar...</option>
+                <option value="Masculino" style="color: black;">Masculino</option>
+                <option value="Femenino" style="color: black;">Femenino</option>
+                <option value="Otro" style="color: black;">Otro</option>
+                <option value="Prefiero no decirlo" style="color: black;">Prefiero no decirlo</option>
+            </select>
+        </div>
+
+        <div class="input-group" style="text-align: left; margin-top: 1rem;">
+            <label style="display: block; margin-bottom: 8px;">Foto de Perfil</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div id="previewEditAvatar" class="profile-avatar" style="width: 50px; height: 50px; font-size: 1.8rem;">😊</div>
+                <div style="flex: 1;">
+                    <label class="btn-custom" style="display:block; text-align:center; padding: 0.6rem; margin: 0; font-size: 0.85rem;">
+                        📷 Subir Imagen
+                        <input type="file" id="inpProfilePhoto" accept="image/png, image/jpeg, image/webp" style="display: none;" onchange="handlePhotoUpload(event)">
+                    </label>
+                    <button class="btn-danger" style="padding: 0.4rem; font-size: 0.75rem; margin-top: 5px; width: 100%;" onclick="clearProfilePhoto()">🗑️ Usar Emoji</button>
+                </div>
+            </div>
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">La foto se guardará de forma privada en tu dispositivo.</p>
+        </div>
+
+        <button class="btn" style="margin-top: 1rem; background: var(--primary); color: white;" onclick="saveProfileData()">Guardar Cambios</button>
+        <button class="btn-reset" onclick="closeEditProfileModal()">Cancelar</button>
+    </div>
+</div>
+
 
 <!-- Achievements Modal -->
 <div class="modal-overlay" id="achievementsModal">

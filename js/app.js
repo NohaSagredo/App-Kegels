@@ -29,12 +29,40 @@
     ];
     
     function getTipsByGoal() {
-        if (!user.goal) return baseTips;
-        if (user.goal === 'clinico') return [...baseTips, "Objetivo: Paciencia. El control de vejiga mejora drásticamente tras 6 semanas de constancia.", "Notarás las reducciones de fugas al toser o reír muy pronto."];
-        if (user.goal === 'postparto') return [...baseTips, "Objetivo: Recuperación. Empieza suave, tu cuerpo ha pasado por mucho.", "No te excedas. La zona perineal necesita sanar mientras se tonifica."];
-        if (user.goal === 'sexual') return [...baseTips, "Objetivo: Plenitud. Mayor flujo sanguíneo significa mayor sensibilidad física.", "Un músculo PC fuerte mejora el control, la lubricación y la intensidad orgásmica."];
-        if (user.goal === 'fitness') return [...baseTips, "Objetivo: Core Fuerte. El suelo pélvico es la base oculta de tu core.", "Fortalecer tu suelo pélvico protegerá tu zona lumbar durante levantamientos pesados."];
-        return baseTips;
+        let tips = [...baseTips];
+        
+        // Añadir consejos específicos y ampliados por sexo
+        if (user.gender === 'Masculino') {
+            tips.push(
+                "Para hombres: un Kegel bien hecho se siente como intentar levantar o retraer levemente el pene hacia el cuerpo.",
+                "Evita apretar los glúteos. El trabajo debe sentirse internamente, la misma sensación que al intentar detener el flujo de orina.",
+                "Es normal sentir un pequeño movimiento expansivo y de retracción en la base del perineo (entre el escroto y el ano).",
+                "Hombres: Fortalecer el músculo pubococcígeo (PC) mejora la circulación, promoviendo erecciones significativamente más firmes.",
+                "El control pélvico masculino disminuye la sensibilidad excesiva, dándote control consciente para retrasar la eyaculación.",
+                "Consejo visual: Imagina que quieres acercar los testículos hacia el estómago de forma lenta y controlada.",
+                "Durante el tiempo de relajación (RELAJA), asegúrate de que tu perineo se suelte y 'descienda' por completo. No acumules tensión.",
+                "Los ejercicios Kegel diarios previenen afecciones de la próstata y eliminan problemas como el goteo después de orinar."
+            );
+        } else if (user.gender === 'Femenino') {
+            tips.push(
+                "Para mujeres: la sensación correcta es similar a intentar levantar y retener una pequeña canica internamente.",
+                "Relaja completamente tu mandíbula y tus hombros durante las repeticiones. La tensión facial se refleja en la tensión pélvica.",
+                "Es vital relajar el suelo pélvico tanto como lo contraes. Un músculo siempre apretado genera dolores y acortamiento (hipertonía).",
+                "Visualiza tu suelo pélvico como un ascensor: cierra puertas, sube lentamente al primer piso, y luego desciende y abre las puertas de nuevo.",
+                "Este entrenamiento oxigena los tejidos corporales, aumentando el flujo sanguíneo y mejorando de forma natural tu lubricación.",
+                "Un músculo perineal fuerte tiene mayor rango de contracción, lo que incrementa enormemente la fuerza y duración de los orgasmos.",
+                "En la recuperación post-parto, los ejercicios Kegel son tus mejores aliados para reconectar y tonificar la musculatura perineal.",
+                "Evita 'empujar' hacia afuera con el abdomen. El movimiento de un Kegel siempre es de succionar, cerrar y levantar hacia adentro."
+            );
+        }
+        
+        if (!user.goal) return tips;
+        if (user.goal === 'clinico') return [...tips, "Objetivo: Paciencia. El control de vejiga mejora drásticamente tras 6 semanas de constancia.", "Notarás las reducciones de fugas al toser o reír muy pronto."];
+        if (user.goal === 'postparto') return [...tips, "Objetivo: Recuperación. Empieza suave, tu cuerpo ha pasado por mucho.", "No te excedas. La zona perineal necesita sanar mientras se tonifica."];
+        if (user.goal === 'sexual') return [...tips, "Objetivo: Plenitud. Mayor flujo sanguíneo significa mayor sensibilidad física.", "Un músculo PC fuerte mejora el control, el riego capilar y la intensidad orgásmica."];
+        if (user.goal === 'fitness') return [...tips, "Objetivo: Core Fuerte. El suelo pélvico es la base oculta de tu core.", "Fortalecer tu suelo pélvico protegerá tu zona lumbar durante levantamientos pesados."];
+        
+        return tips;
     }
 
     // Estado del Usuario
@@ -413,10 +441,10 @@
         updateAICoach();
         renderStreakCalendar();
         renderGarden();
+        updateMarquee();
         
         // Actualizar avatar en header
-        let topAv = document.getElementById('topAvatar');
-        if (topAv) topAv.innerText = user.avatar || '😊';
+        applyAvatarToElement('topAvatar');
 
         // Actualizar botones con recompensas potenciales
         let today = getLocalDateString();
@@ -441,27 +469,83 @@
         if(document.getElementById('btnFlicks')) document.getElementById('btnFlicks').innerHTML = `⚡ Flicks <span style="font-size: 0.7rem; opacity: 0.8; font-weight: normal; margin-left: 5px;">(+${Math.floor(lvl.xpReward * 0.8)} XP)</span>`;
     }
 
+    function updateMarquee() {
+        let el = document.getElementById('achievementsMarquee');
+        if (!el) return;
+        if (!user.achievements || user.achievements.length === 0) {
+            el.innerText = "No hay logros aún. ¡Sigue entrenando!";
+        } else {
+            let text = user.achievements.map(achId => {
+                let achDef = allAchievements.find(ac => ac.id === achId);
+                return `🏆 ${achDef ? achDef.name : 'Misterio'}`;
+            }).join(' ✨ ');
+            // Repetimos el texto si es muy corto para asegurar el flujo continuo
+            if (user.achievements.length < 4) {
+                text = text + ' ✨ ' + text + ' ✨ ' + text;
+            }
+            el.innerText = text;
+        }
+    }
+
     function rotateTip() {
         const pool = getTipsByGoal();
         const randomTip = pool[Math.floor(Math.random() * pool.length)];
         elTipText.innerText = `💡 ${randomTip}`;
     }
 
-    function updateAICoach() {
+    function updateAICoach(forceAnimate = false, customMessage = null) {
         let el = document.getElementById('aiCoachText');
         if (!el) return;
         let today = getLocalDateString();
         
-        if (user.totalWorkouts === 0 || !user.lastWorkoutDate) {
-            el.innerHTML = "<strong>Bienvenido.</strong> Todo gran viaje comienza con un sencillo paso. Presiona Entrenar.";
+        let finalHtml = "";
+        if (customMessage) {
+            finalHtml = customMessage;
+        } else if (user.totalWorkouts === 0 || !user.lastWorkoutDate) {
+            finalHtml = "<strong>Bienvenido.</strong> Todo gran viaje comienza con un sencillo paso. Presiona Entrenar.";
         } else if (user.streak >= 3 && user.lastWorkoutDate === today) {
-            el.innerHTML = `<strong>¡Racha de ${user.streak} días!</strong> Estás desarrollando una memoria muscular increíble. Céntrate en la relajación total.`;
+            finalHtml = `<strong>¡Racha de ${user.streak} días!</strong> Estás desarrollando una memoria muscular increíble. Céntrate en la relajación total.`;
         } else if (user.streak >= 3 && user.lastWorkoutDate !== today) {
-            el.innerHTML = `<strong>Protege tu racha de ${user.streak}.</strong> Solo toma 3 minutos mantener tu progreso de élite intacto.`;
+            finalHtml = `<strong>Protege tu racha de ${user.streak}.</strong> Solo toma 3 minutos mantener tu progreso de élite intacto.`;
         } else if (user.lastDailyDate === today) {
-            el.innerHTML = `<strong>Reto Supremo completado.</strong> Tus fibras de contracción rápida están fatigadas (es positivo). Descansa y recupera.`;
+            finalHtml = `<strong>Reto Supremo completado.</strong> Tus fibras de contracción rápida están fatigadas (es positivo). Descansa y recupera.`;
         } else {
-            el.innerHTML = "<strong>Constancia técnica.</strong> La fuerza pura no sirve sin la técnica. Asegúrate de aislar el suelo pélvico sin tensar los glúteos ni los muslos.";
+            let fallbackText = "<strong>Constancia técnica.</strong> La fuerza pura no sirve sin la técnica. Asegúrate de aislar el suelo pélvico sin tensar los glúteos ni los muslos.";
+            if (user.gender === 'Masculino') {
+                fallbackText = "<strong>Foco en el control masculino.</strong> El verdadero poder no está en la fuerza bruta, sino en aislar el músculo púbico. Si tus abdominales tiemblan o cortas la respiración, baja la intensidad.";
+            } else if (user.gender === 'Femenino') {
+                fallbackText = "<strong>Conexión profunda femenina.</strong> El progreso perineal requiere suavidad y soltar tensiones externas. Durante la relajación, inhala profundo y percibe cómo toda el área cede y descansa.";
+            }
+            finalHtml = fallbackText;
+        }
+
+        if (forceAnimate) {
+            el.innerHTML = '';
+            let i = 0;
+            let isTag = false;
+            let currentText = '';
+            
+            function type() {
+                if (i < finalHtml.length) {
+                    let char = finalHtml.charAt(i);
+                    currentText += char;
+                    el.innerHTML = currentText + '<span style="opacity: 0.7;">_</span>';
+                    if (char === '<') isTag = true;
+                    if (char === '>') isTag = false;
+                    
+                    i++;
+                    if (isTag) {
+                        type();
+                    } else {
+                        setTimeout(type, 15);
+                    }
+                } else {
+                    el.innerHTML = finalHtml;
+                }
+            }
+            type();
+        } else {
+            el.innerHTML = finalHtml;
         }
     }
 
@@ -660,7 +744,8 @@
     }
 
     function startWorkout() {
-        startWorkoutEngine(levels[user.currentLevelIndex]);
+        let lvl = { ...levels[user.currentLevelIndex] };
+        startWorkoutEngine(applyDifficultyMultiplier(lvl));
     }
 
     function startRoutine(id) {
@@ -677,18 +762,45 @@
             let p2 = { name: "Quema Rápida", reps: 15, contractTime: 2, relaxTime: 2 };
             routineDef = { name: "Rutina Espartana", xpReward: 55, isCustom: true, phases: [p1, p2] };
         }
-        setTimeout(() => startWorkoutEngine(routineDef), 350);
+        setTimeout(() => startWorkoutEngine(applyDifficultyMultiplier(routineDef)), 350);
     }
 
     function startFlicks() {
-        // Flicks train fast twitch muscle fibers: 1s squeeze, 1s release
         let lvl = levels[user.currentLevelIndex];
-        let reps = lvl.reps * 2; // Twice the reps because it's fast
-        startWorkoutEngine({ 
+        let reps = lvl.reps * 2; 
+        startWorkoutEngine(applyDifficultyMultiplier({ 
             name: "Ráfaga Rápida (Flicks)", reps: reps, contractTime: 1, relaxTime: 1, 
             xpReward: Math.floor(lvl.xpReward * 0.8), isCustom: true,
             benefit: "Entrenando fibras de contracción rápida para fortalecer el esfínter velozmente."
-        });
+        }));
+    }
+
+    function startDailyChallenge() {
+        if (user.lastDailyDate === getLocalDateString()) {
+            alert("Ya completaste el Reto Supremo hoy. ¡Descansa y vuelve mañana!");
+            return;
+        }
+        let lvl = levels[user.currentLevelIndex];
+        let p1 = { name: "Calentamiento", reps: lvl.reps, contractTime: lvl.contractTime, relaxTime: lvl.relaxTime };
+        let p2 = { name: "Resistencia", reps: Math.ceil(lvl.reps * 1.5), contractTime: Math.ceil(lvl.contractTime * 1.5), relaxTime: lvl.relaxTime };
+        let p3 = { name: "Flicks", reps: lvl.reps * 2, contractTime: 1, relaxTime: 1 };
+        
+        let dailyDef = { name: "Reto Diario Supremo", xpReward: lvl.xpReward * 3, isDaily: true, phases: [p1, p2, p3] };
+        startWorkoutEngine(applyDifficultyMultiplier(dailyDef));
+    }
+
+    function applyDifficultyMultiplier(baseParams) {
+        if (user.difficultyMultiplier === undefined) user.difficultyMultiplier = 1.0;
+        if (baseParams.isCustom && baseParams.name === "Personalizado") return baseParams; // Do not alter user-input custom values
+        
+        let p = { ...baseParams };
+        if (p.phases) {
+            p.phases = p.phases.map(phase => applyDifficultyMultiplier(phase));
+        } else {
+            if (p.reps) p.reps = Math.max(1, Math.round(p.reps * user.difficultyMultiplier));
+            if (p.contractTime && p.contractTime > 1) p.contractTime = Math.max(1, Math.round(p.contractTime * user.difficultyMultiplier));
+        }
+        return p;
     }
 
     // --- Motor de Entrenamiento ---
@@ -923,7 +1035,7 @@
         if (isCancelled) {
             handleCancel();
         } else {
-            finishWorkout(workoutParams);
+            openFeedbackModal(workoutParams);
         }
       } catch(engineErr) {
         console.error('[KF] Workout engine error:', engineErr);
@@ -952,7 +1064,35 @@
         updateUI();
     }
 
-    function finishWorkout(workoutParams) {
+    let pendingWorkoutParams = null;
+
+    function openFeedbackModal(workoutParams) {
+        pendingWorkoutParams = workoutParams;
+        openModal('feedbackModal', 'feedbackModalContent');
+        
+        // Prevenir sonidos y resets no deseados hasta la decisión
+        isWorkingOut = false;
+        elWorkoutControls.style.display = 'none';
+        elTimerCircle.classList.remove("paused-state");
+        stopOceanNoise();
+        stopMusic();
+    }
+
+    window.submitFeedback = function(multiplierDelta, difficultyName) {
+        closeModal('feedbackModal', 'feedbackModalContent');
+        
+        if (user.difficultyMultiplier === undefined) user.difficultyMultiplier = 1.0;
+        user.difficultyMultiplier += multiplierDelta;
+        
+        // Limits: no less than 50% base difficulty, no more than 300%
+        if (user.difficultyMultiplier < 0.5) user.difficultyMultiplier = 0.5;
+        if (user.difficultyMultiplier > 3.0) user.difficultyMultiplier = 3.0;
+
+        saveProgress();
+        finishWorkout(pendingWorkoutParams, difficultyName);
+    };
+
+    function finishWorkout(workoutParams, difficultyName) {
         setTimerState("¡MISIÓN ÉPICA!", "idle");
         elTimeText.innerText = "✓";
         if (pSys) pSys.burst();
@@ -1013,11 +1153,55 @@
         if (leveledUp) {
             setTimeout(() => alert(`¡NUEVO NIVEL ALCANZADO!\n\nEstás en el Nivel ${levels[user.currentLevelIndex].id}: ${levels[user.currentLevelIndex].name}\n\nRevisa la sección de "Tu cuerpo en este nivel".`), 2500);
         }
-
         setTimeout(() => {
             elStateText.innerText = "LISTO";
             elTimeText.innerText = "0:00";
             resetWorkoutUI();
+            
+            // Generate Custom Message
+            let customMsg = `<strong>¡Excelente trabajo!</strong> Has completado la misión y ganado +${workoutParams.xpReward} XP.`;
+            
+            if (workoutParams.isDaily) {
+                if (user.gender === 'Masculino') {
+                    customMsg = `<strong>¡Reto superado!</strong> Excelente resistencia. Tu riego sanguíneo pélvico está en su pico.`;
+                } else if (user.gender === 'Femenino') {
+                    customMsg = `<strong>¡Reto superado!</strong> Maravilloso control. Has tonificado vitalmente tu suelo pélvico.`;
+                } else {
+                    customMsg = `<strong>¡Reto superado!</strong> Has tonificado y fortalecido tu resistencia al máximo hoy.`;
+                }
+            } else if (leveledUp) {
+                customMsg = `<strong>¡Nivel Avanzado!</strong> Has subido al nivel ${levels[user.currentLevelIndex].id}. ¡Tómate un respiro!`;
+            } else if (difficultyName === 'Fallida') {
+                customMsg = `<strong>¡Intento valioso!</strong> Llegar hasta el fallo es donde reside el progreso. He bajado la intensidad de las próximas rutinas para ajustar a tu capacidad actual.`;
+            } else if (difficultyName === 'Muy Fácil' || difficultyName === 'Fácil') {
+                customMsg = `<strong>¿Muy fácil? Entendido.</strong> Has superado esto sin sudar. He aumentado la intensidad matemática del sistema para la próxima vez. Preparate.`;
+            } else if (difficultyName === 'Difícil') {
+                customMsg = `<strong>¡Perfecto!</strong> Esa sensación de quemazón indica progreso real. Estamos en la zona óptima de hipertrofia. Sigue así.`;
+            } else {
+                if (user.gender === 'Masculino') {
+                    customMsg = "<strong>¡Misión cumplida!</strong> Buen control perineal masculino. Tu músculo PC se fortalece con cada sesión.";
+                } else if (user.gender === 'Femenino') {
+                    customMsg = "<strong>¡Misión cumplida!</strong> Excelente conexión. Tu piso pélvico femenino mejora visiblemente.";
+                } else {
+                    customMsg = "<strong>¡Misión cumplida!</strong> Has sumado experiencia valiosa para tu control central.";
+                }
+            }
+            
+            updateAICoach(true, customMsg);
+            
+            // Highlight AI Coach Effect
+            let overlay = document.getElementById('focusOverlay');
+            let coach = document.getElementById('aiCoachCard');
+            if (overlay && coach) {
+                overlay.classList.add('active');
+                coach.classList.add('coach-focused');
+                
+                // Keep the focus for 3.5 seconds
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    coach.classList.remove('coach-focused');
+                }, 3500);
+            }
         }, 3000);
     }
 
@@ -1812,27 +1996,145 @@
     }
     function selectAvatar(av) {
         user.avatar = av;
+        if (!user.photoUrl) {
+            document.getElementById('profileAvatar').innerText = av;
+            let topAv = document.getElementById('topAvatar');
+            if (topAv) topAv.innerText = av;
+        }
         saveProgress();
-        document.getElementById('profileAvatar').innerText = av;
-        document.getElementById('topAvatar').innerText = av;
         document.getElementById('avatarPickerContainer').style.display = 'none';
         renderProfileStats();
     }
+    
+    // --- Lógica del Nuevo Modal de Editar Perfil ---
+    let pendingPhotoData = null;
+
+    function openEditProfileModal() {
+        pendingPhotoData = user.photoUrl || null;
+        document.getElementById('inpProfileName').value = user.username || "";
+        document.getElementById('inpProfileGender').value = user.gender || "";
+        
+        updatePreviewEditAvatar();
+        openModal('editProfileModal', 'editProfileModalContent');
+    }
+
+    function closeEditProfileModal() {
+        closeModal('editProfileModal', 'editProfileModalContent');
+    }
+
+    function updatePreviewEditAvatar() {
+        let preview = document.getElementById('previewEditAvatar');
+        if (pendingPhotoData) {
+            preview.style.backgroundImage = `url(${pendingPhotoData})`;
+            preview.innerText = "";
+        } else {
+            preview.style.backgroundImage = "none";
+            preview.innerText = user.avatar || "😊";
+        }
+    }
+
+    function handlePhotoUpload(event) {
+        let file = event.target.files[0];
+        if (!file) return;
+        if (!file.type.match('image.*')) {
+            alert("Solo se permiten imágenes.");
+            return;
+        }
+        
+        let reader = new FileReader();
+        reader.onload = function(readerEvent) {
+            let img = new Image();
+            img.onload = function() {
+                // Resize logic to avoid LocalStorage quota issues
+                let canvas = document.createElement('canvas');
+                let max_size = 300;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > max_size) {
+                        height *= max_size / width;
+                        width = max_size;
+                    }
+                } else {
+                    if (height > max_size) {
+                        width *= max_size / height;
+                        height = max_size;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                
+                // Compress to WebP or JPEG
+                pendingPhotoData = canvas.toDataURL('image/jpeg', 0.8);
+                updatePreviewEditAvatar();
+            };
+            img.src = readerEvent.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function clearProfilePhoto() {
+        pendingPhotoData = null;
+        document.getElementById('inpProfilePhoto').value = "";
+        updatePreviewEditAvatar();
+    }
+
+    function saveProfileData() {
+        let newName = document.getElementById('inpProfileName').value.trim();
+        let newGender = document.getElementById('inpProfileGender').value;
+        
+        user.username = newName || null;
+        user.gender = newGender || null;
+        user.photoUrl = pendingPhotoData;
+        
+        saveProgress();
+        renderProfileStats();
+        closeEditProfileModal();
+        showToast("Perfil actualizado", "Éxito", "✅");
+    }
+
+    function applyAvatarToElement(elementId) {
+        let el = document.getElementById(elementId);
+        if (!el) return;
+        if (user.photoUrl) {
+            el.style.backgroundImage = `url(${user.photoUrl})`;
+            el.innerText = "";
+        } else {
+            el.style.backgroundImage = "none";
+            el.innerText = user.avatar || '😊';
+        }
+    }
+
     function renderProfileStats() {
         let lvl = levels[user.currentLevelIndex];
-        document.getElementById('profileAvatar').innerText = user.avatar || '😊';
-        document.getElementById('profileLevel').innerText = `Nivel ${lvl.id}: ${lvl.name}`;
+        
+        applyAvatarToElement('profileAvatar');
+        applyAvatarToElement('topAvatar');
+        
+        let nameEl = document.getElementById('profileName');
+        if (nameEl) nameEl.innerText = user.username ? user.username : 'Guerrero Kegel';
+        
+        let genderEl = document.getElementById('profileGender');
+        if (genderEl) genderEl.innerText = user.gender ? user.gender : '';
+
+        let levelEl = document.getElementById('profileLevel');
+        if (levelEl) levelEl.innerText = `Nivel ${lvl.id}: ${lvl.name}`;
         
         let stats = document.getElementById('profileStats');
         let totalDays = Object.keys(user.workoutDates || {}).filter(k => user.workoutDates[k] > 0).length;
-        stats.innerHTML = `
-            <div class="profile-stat"><div class="profile-stat-value">${user.totalWorkouts || 0}</div><div class="profile-stat-label">Sesiones</div></div>
-            <div class="profile-stat"><div class="profile-stat-value">🔥 ${user.streak || 0}</div><div class="profile-stat-label">Racha</div></div>
-            <div class="profile-stat"><div class="profile-stat-value">${user.xp || 0}</div><div class="profile-stat-label">XP Total</div></div>
-            <div class="profile-stat"><div class="profile-stat-value">${totalDays}</div><div class="profile-stat-label">Días Activos</div></div>
-            <div class="profile-stat"><div class="profile-stat-value">${user.maxHoldTime || 0}s</div><div class="profile-stat-label">Rto. Máx</div></div>
-            <div class="profile-stat"><div class="profile-stat-value">🪙 ${user.coins || 0}</div><div class="profile-stat-label">Monedas</div></div>
-        `;
+        if (stats) {
+            stats.innerHTML = `
+                <div class="profile-stat"><div class="profile-stat-value">${user.totalWorkouts || 0}</div><div class="profile-stat-label">Sesiones</div></div>
+                <div class="profile-stat"><div class="profile-stat-value">🔥 ${user.streak || 0}</div><div class="profile-stat-label">Racha</div></div>
+                <div class="profile-stat"><div class="profile-stat-value">${user.xp || 0}</div><div class="profile-stat-label">XP Total</div></div>
+                <div class="profile-stat"><div class="profile-stat-value">${totalDays}</div><div class="profile-stat-label">Días Activos</div></div>
+                <div class="profile-stat"><div class="profile-stat-value">${user.maxHoldTime || 0}s</div><div class="profile-stat-label">Rto. Máx</div></div>
+                <div class="profile-stat"><div class="profile-stat-value">🪙 ${user.coins || 0}</div><div class="profile-stat-label">Monedas</div></div>
+            `;
+        }
+        
         // Logros
         let achContainer = document.getElementById('profileAchievements');
         if (achContainer) {
