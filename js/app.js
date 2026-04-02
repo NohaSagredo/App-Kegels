@@ -1122,8 +1122,8 @@
         document.getElementById('toastDesc').innerText = name;
         if(document.getElementById('toastTitle')) document.getElementById('toastTitle').innerText = title;
         if(document.getElementById('toastIcon')) document.getElementById('toastIcon').innerText = icon;
-        toast.style.bottom = '20px';
-        setTimeout(() => toast.style.bottom = '-100px', 5000);
+        toast.style.bottom = 'calc(20px + env(safe-area-inset-bottom))';
+        setTimeout(() => toast.style.bottom = '-250px', 5000);
         emitVibration('success');
     }
 
